@@ -141,7 +141,7 @@ export default {
         }).then(() => {
           let fileGuidArr = []
           delArr.forEach(item => {
-            fileGuidArr.push(item.fileGuid)
+            fileGuidArr.push({fileGuid: item.fileGuid})
           })
           this.fetchRmFile(fileGuidArr)
         })
