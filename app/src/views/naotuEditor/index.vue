@@ -21,16 +21,6 @@ export default {
     this.fileGuid = routeParams.id
     this.fetchQueryFile()
   },
-  mounted() {
-    // let iframe = document.createElement('iframe');
-    // iframe.src="../../../public/kityminder-editor/dist/index.html";
-    // iframe.id = 'minderIframe'
-    // iframe.name = 'minderIframe'
-    // document.body.appendChild(iframe);
-    // // iframe.onload = () => {
-    //   this.handleLoad()
-    // // }
-  },
   methods: {
     // iframe load
     handleLoad () {
