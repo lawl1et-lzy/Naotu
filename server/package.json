@@ -1,5 +1,6 @@
 {
-  "name": "testmongodb",
+  "name": "server",
+  "author": "Lawliet <lawlietlzy@foxmail.com>",
   "version": "0.0.0",
   "private": true,
   "scripts": {

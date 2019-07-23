@@ -20,6 +20,9 @@ router.post('/api/naotu/update', naotuControler.update)
 // del
 router.post('/api/naotu/del', naotuControler.del)
 
+// rm 
+router.post('/api/naotu/rm', naotuControler.rm)
+
 // queryFile
 router.post('/api/naotu/query_file', naotuControler.queryFile)
 

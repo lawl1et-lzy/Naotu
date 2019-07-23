@@ -138,12 +138,22 @@ let reName = async (req, res, next) => {
   }
 }
 
-// 更新
+// 更新单个字段
 let update = async (req, res, next) => {
-  let { fileGuid, content } = req.body
-  let file = await modelNaotu.findOne({fileGuid})
+  let rp = req.body
+  if(!(base.isObject(rp) && Object.keys(rp).length > 0)){
+    res.json({
+      response: {
+        error_code: 10003,
+        error_message: '',
+        hint_message: '传入参数有误',
+      }
+    })
+    return false
+  }
+  let file = await modelNaotu.findOne({fileGuid: rp.fileGuid})
   if(file) {
-    file.content = content
+    Object.assign(file, rp)
     file.save()
       .then(doc => {
         res.json({
@@ -164,56 +174,38 @@ let update = async (req, res, next) => {
         })
       })
   } else {
-    add(req, res, next)
+    res.json({
+      response: {
+        error_code: 10002,
+        error_message: '',
+        hint_message: '暂无此数据',
+      }
+    })
   }
 }
 
-/**
- * 批量删除 文件 或者 文件夹
- * 1. 文件
- *  1.1 直接删除
- * 
- * 2. 文件夹
- *  2.1 删除当前文件夹
- *  2.2 删除所有 以该文件夹 fileGuid 为 parentGuid 的 files
- */
-let del = async (req, res, next) => {
+// 批量丢入回收站
+let rm = async (req, res, next) => {
   let { fileGuidArr } = req.body
   if(Array.isArray(fileGuidArr) && fileGuidArr.length > 0) {
     fileGuidArr.forEach(async fileGuid => {
-      let rp = {}
-      let file = await modelNaotu.findOne({ fileGuid })
-      if(file) {
-        rp.fileGuid = fileGuid
-        // 判断是否是文件夹类型
-        if(file.fileType === 'directory'){
-          rp.parentGuid = rp.fileGuid
-        }
-        modelNaotu.deleteMany(rp)
-          .then(doc => {
-            res.json({
-              response: {
-                error_code: 0,
-                error_message: '',
-                hint_message: '删除成功',
-              }
-            })
-          })
-          .catch(err => {
-            res.json({
-              response: {
-                error_code: 10001,
-                error_message: '',
-                hint_message: err,
-              }
-            })
-          })
+      let file = await modelNaotu.findOne({fileGuid})
+      file.isDelete = true
+      let resp = await file.save(file)
+      if(resp) {
+        res.json({
+          response: {
+            error_code: 0,
+            error_message: '',
+            hint_message: 'success',
+          }
+        })
       } else {
         res.json({
           response: {
-            error_code: 200,
+            error_code: 10003,
             error_message: '',
-            hint_message: '暂无此文件夹',
+            hint_message: '更新失败',
           }
         })
       }
@@ -221,7 +213,46 @@ let del = async (req, res, next) => {
   } else {
     res.json({
       response: {
-        error_code: 10001,
+        error_code: 10002,
+        error_message: '',
+        hint_message: '参数有误',
+      }
+    })
+  }
+}
+
+// 批量永久删除
+let del = async (req, res, next) => {
+  let { fileGuidArr } = req.body
+  if(Array.isArray(fileGuidArr) && fileGuidArr.length > 0) {
+    fileGuidArr.forEach(async fileGuid => {
+      let rp = {
+        fileGuid
+      }
+      modelNaotu.deleteOne(rp)
+        .then(doc => {
+          res.json({
+            response: {
+              error_code: 0,
+              error_message: '',
+              hint_message: '删除成功',
+            }
+          })
+        })
+        .catch(err => {
+          res.json({
+            response: {
+              error_code: 10001,
+              error_message: '',
+              hint_message: err,
+            }
+          })
+        })
+    })
+  } else {
+    res.json({
+      response: {
+        error_code: 10002,
         error_message: '',
         hint_message: '参数有误',
       }
@@ -261,7 +292,10 @@ let queryFile = async(req, res ,next) => {
 let queryDirectoty = async(req, res ,next) => {
   let { parentGuid } = req.body
   let rp = {
-    parentGuid
+    parentGuid,
+    isDelete: {
+      $eq: false
+    }
   }
   modelNaotu.find(rp)
     .then(data => {
@@ -293,5 +327,6 @@ module.exports = {
   update,
   del,
   queryFile,
-  queryDirectoty
+  queryDirectoty,
+  rm
 }
