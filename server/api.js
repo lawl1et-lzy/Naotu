@@ -29,4 +29,10 @@ router.post('/api/naotu/query_file', naotuControler.queryFile)
 // queryDirectoty
 router.post('/api/naotu/query_directory', naotuControler.queryDirectoty)
 
+// queryDirectotyForTrash
+router.post('/api/naotu/query_directory_for_trash', naotuControler.queryDirectotyForTrash)
+
+// revert_files
+router.post('/api/naotu/revert_files', naotuControler.revertFiles)
+
 module.exports = router;
