@@ -34,6 +34,14 @@ class Api {
       data
     })
   }
+  // rm 脑图
+  static rmFile (data) {
+    return axios({
+      method: 'POST',
+      url: `/naotu/rm`,
+      data
+    })
+  }
   // queryFile
   static queryFile (data) {
     return axios({

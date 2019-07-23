@@ -2,6 +2,7 @@
   "name": "naotu",
   "version": "4.2.1",
   "description": "naotu",
+  "author": "Lawliet <lawlietlzy@foxmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
