@@ -7,180 +7,89 @@ const ROOT_GUID = 'lawliet111'
 
 // 获取 root guid
 let getRootGuid = async (req, res, next) => {
-  let data = {}
-  let file = await modelNaotu.findOne({ fileGuid: ROOT_GUID })
-  if(file) {
-    data.fileGuid = file.fileGuid
-  } else {
-    let rp = {
-      parentGuid: '0',
-      fileGuid: ROOT_GUID,
-      fileName: 'root',
-      fileType: 'directory',
-      extName: ''
+  try {
+    let data = await modelNaotu.findOne({ fileGuid: ROOT_GUID })
+    if(!data) {
+      let rp = {
+        parentGuid: '0',
+        fileGuid: ROOT_GUID,
+        fileName: 'root',
+        fileType: 'directory',
+        extName: ''
+      }
+      let naotu = new modelNaotu(rp)
+      data = await naotu.save(rp)
     }
-    let naotu = new modelNaotu(rp)
-    await naotu.save(rp)
-      .then(doc => {
-        data = doc
-      })
-      .catch(err => {
-        res.json({
-          response: {
-            error_code: 10001,
-            error_message: '',
-            hint_message: err,
-          },
-          data
-        })
-      }) 
+    responseJson({res, data})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
-  res.json({
-    response: {
-      error_code: 0,
-      error_message: '',
-      hint_message: '',
-    },
-    data
-  })
 }
 
 // 添加文件
 let addFile = async (req, res, next) => {
-  let { parentGuid } = req.body
-  let rp = {}
-
-  rp.parentGuid = parentGuid // 父级ID
-  rp.fileGuid = base.generateVVID().split('-').join('') // 生成文件ID
-
-  let naotu = new modelNaotu(rp)
-  naotu.save()
-    .then(data => {
-        res.json({
-          response: {
-            error_code: 0,
-            error_message: '',
-            hint_message: '',
-          },
-          data
-        })
-    })
-    .catch(err => {
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: err,
-          hint_message: '新增失败',
-        }
-      })
-    })
+  try {
+    let { parentGuid } = req.body
+    let rp = {}
+    rp.parentGuid = parentGuid // 父级ID
+    rp.fileGuid = base.generateVVID().split('-').join('') // 生成文件ID
+    let naotu = new modelNaotu(rp)
+    let data = await naotu.save()
+    responseJson({res, data})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
+  }
 }
 
 // 添加文件夹
 let addDirectory = async (req, res, next) => {
-  let { parentGuid, fileName = '新建文件夹', fileType = 'directory', extName = '' } = req.body
-  let rp = {
-    parentGuid,
-    fileGuid: base.generateVVID().split('-').join(''), // 生成文件ID
-    fileName,
-    fileType,
-    extName
-  }
+  try {
+    let { parentGuid, fileName = '新建文件夹', fileType = 'directory', extName = '' } = req.body
+    let rp = {
+      parentGuid,
+      fileGuid: base.generateVVID().split('-').join(''), // 生成文件ID
+      fileName,
+      fileType,
+      extName
+    }
 
-  let naotu = new modelNaotu(rp)
-  naotu.save()
-    .then(data => {
-        res.json({
-          response: {
-            error_code: 0,
-            error_message: '',
-            hint_message: '',
-          },
-          data
-        })
-    })
-    .catch(err => {
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: err,
-          hint_message: '新增失败',
-        }
-      })
-    })
+    let naotu = new modelNaotu(rp)
+    await naotu.save()
+    responseJson({res})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
+  }
 }
 
 // 重命名
 let reName = async (req, res, next) => {
-  let { fileGuid, newName } = req.body
-  let file = await modelNaotu.findOne({ fileGuid })
-  if(file) {
-    file.fileName = newName
-    file.save()
-      .then(doc => {
-        res.json({
-          response: {
-            error_code: 0,
-            error_message: '',
-            hint_message: 'success',
-          }
-        })
-      })
-      .catch(err => {
-        res.json({
-          response: {
-            error_code: 10001,
-            error_message: '',
-            hint_message: err,
-          }
-        })
-      })
+  let { fileGuid, fileName } = req.body
+  if(!(fileGuid && fileName)) responseJson({res, error_code: 10001})
+  try {
+    await modelNaotu.update({ fileGuid }, { fileName })
+    responseJson({res})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
 // 更新单个字段
 let update = async (req, res, next) => {
-  let rp = req.body
-  if(!(base.isObject(rp) && Object.keys(rp).length > 0)){
-    res.json({
-      response: {
-        error_code: 10003,
-        error_message: '',
-        hint_message: '传入参数有误',
-      }
-    })
-    return false
-  }
-  let file = await modelNaotu.findOne({fileGuid: rp.fileGuid})
-  if(file) {
-    Object.assign(file, rp)
-    file.save()
-      .then(doc => {
-        res.json({
-          response: {
-            error_code: 0,
-            error_message: '',
-            hint_message: '添加成功',
-          }
-        })
-      })
-      .catch(err => {
-        res.json({
-          response: {
-            error_code: 10001,
-            error_message: '',
-            hint_message: err,
-          }
-        })
-      })
-  } else {
-    res.json({
-      response: {
-        error_code: 10002,
-        error_message: '',
-        hint_message: '暂无此数据',
-      }
-    })
+  try {
+    let rp = req.body
+    if(!(base.isObject(rp) && Object.keys(rp).length > 0)) responseJson({res, error_code: 10001})
+    let fileGuid = rp.fileGuid
+    let modifyDoc = {...rp}
+    delete modifyDoc.fileGuid
+    await modelNaotu.update({ fileGuid }, modifyDoc)
+    responseJson({res})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
@@ -188,131 +97,71 @@ let update = async (req, res, next) => {
 let rm = async (req, res, next) => {
   try {
     let { fileGuidArr } = req.body
-    if(Array.isArray(fileGuidArr) && fileGuidArr.length > 0) {
-      let _fileGuidArr = formatFileGuid(fileGuidArr)
-      let _resp = await findRelatedFiles(_fileGuidArr)
-      if(_resp.length > 0) {
-        let resp = selectFileGuids(_resp)
-        let updateResp = await modelNaotu.updateMany({fileGuid: { $in: resp }}, { isDelete: true }, {multi: true})
-        if(updateResp) {
-          res.json({
-            response: {
-              error_code: 0,
-              error_message: '',
-              hint_message: '删除成功',
-            }
-          })
-        }
-      }
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: '',
-          hint_message: '系统错误',
-        }
-      })
-    } else {
-      res.json({
-        response: {
-          error_code: 10002,
-          error_message: '',
-          hint_message: '参数有误',
-        }
-      })
+    if(!(Array.isArray(fileGuidArr) && fileGuidArr.length > 0)) responseJson({res, error_code: 10001})
+    let _fileGuidArr = formatFileGuid(fileGuidArr)
+    let _resp = await findRelatedFiles(_fileGuidArr)
+    if(_resp.length > 0) {
+      let resp = selectFileGuids(_resp)
+      await modelNaotu.updateMany({fileGuid: { $in: resp }}, { isDelete: true }, {multi: true})
+      responseJson({res})
     }
   } catch (error) {
     console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
-// queryFile
+// 查询文件
 let queryFile = async(req, res ,next) => {
-  let { fileGuid } = req.body
-  let rp = {
-    fileGuid
+  try {
+    let { fileGuid } = req.body;
+    if(!fileGuid) responseJson({res, error_code: 10001})
+    let rp = {
+      fileGuid
+    }
+    let data = await modelNaotu.find(rp)
+    responseJson({res, data})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
-  modelNaotu.find(rp)
-    .then(data => {
-      res.json({
-        response: {
-          error_code: 0,
-          error_message: '',
-          hint_message: '',
-        },
-        data
-      })
-    })
-    .catch(err => {
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: '',
-          hint_message: err,
-        }
-      })
-    })
 }
 
-// queryDirectoty
+// 查询文件夹
 let queryDirectoty = async(req, res ,next) => {
-  let { parentGuid } = req.body
-  let rp = {
-    parentGuid,
-    isDelete: {
-      $eq: false
+  try {
+    let { parentGuid } = req.body
+    if(!parentGuid) responseJson({res, error_code: 10001})
+    let rp = {
+      parentGuid,
+      isDelete: {
+        $eq: false
+      }
     }
+    let data = await modelNaotu.find(rp)
+    responseJson({res, data})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
-  modelNaotu.find(rp)
-    .then(data => {
-      res.json({
-        response: {
-          error_code: 0,
-          error_message: '',
-          hint_message: '',
-        },
-        data
-      })
-    })
-    .catch(err => {
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: '',
-          hint_message: err,
-        }
-      })
-    })
+  
 }
 
-// queryDirectotyForTrash
+// 回收站数据列表
 let queryDirectotyForTrash = async(req, res ,next) => {
-  // let { parentGuid } = req.body
-  let rp = {
-    // parentGuid,
-    isDelete: {
-      $eq: true
+  try {
+    let rp = {
+      isDelete: {
+        $eq: true
+      }
     }
-  }
-  let resp = await modelNaotu.find(rp)
-  if(resp.length > 0) {
-    let data = await filterForTrash(resp) 
-    res.json({
-      response: {
-        error_code: 0,
-        error_message: '',
-        hint_message: 'success',
-      },
-      data
-    })
-  } else {
-    res.json({
-      response: {
-        error_code: 0,
-        error_message: '',
-        hint_message: 'success',
-      },
-      data: []
-    })
+    let data = []
+    let resp = await modelNaotu.find(rp)
+    if(resp.length > 0) data = await filterForTrash(resp)
+    responseJson({res, data})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
@@ -320,40 +169,17 @@ let queryDirectotyForTrash = async(req, res ,next) => {
 let revertFiles = async (req, res, next) => {
   try {
     let { fileGuidArr } = req.body
-    if(Array.isArray(fileGuidArr) && fileGuidArr.length > 0) {
-      let _fileGuidArr = formatFileGuid(fileGuidArr)
-      let _resp = await findRelatedFiles(_fileGuidArr)
-      if(_resp.length > 0) {
-        let resp = selectFileGuids(_resp)
-        let updateResp = await modelNaotu.updateMany({fileGuid: { $in: resp }}, { isDelete: false }, {multi: true})
-        if(updateResp) {
-          res.json({
-            response: {
-              error_code: 0,
-              error_message: '',
-              hint_message: '还原成功',
-            }
-          })
-        }
-      }
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: '',
-          hint_message: '系统错误',
-        }
-      })
-    } else {
-      res.json({
-        response: {
-          error_code: 10002,
-          error_message: '',
-          hint_message: '参数有误',
-        }
-      })
+    if(!(Array.isArray(fileGuidArr) && fileGuidArr.length > 0)) responseJson({res, error_code: 10001})
+    let _fileGuidArr = formatFileGuid(fileGuidArr)
+    let _resp = await findRelatedFiles(_fileGuidArr)
+    if(_resp.length > 0) {
+      let resp = selectFileGuids(_resp)
+      await modelNaotu.updateMany({fileGuid: { $in: resp }}, { isDelete: false }, {multi: true})
     }
+    responseJson({res})
   } catch (error) {
     console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
@@ -361,40 +187,17 @@ let revertFiles = async (req, res, next) => {
 let deleteFiles = async (req, res, next) => {
   try {
     let { fileGuidArr } = req.body
-    if(Array.isArray(fileGuidArr) && fileGuidArr.length > 0) {
-      let _fileGuidArr = formatFileGuid(fileGuidArr)
-      let _resp = await findRelatedFiles(_fileGuidArr)
-      if(_resp.length > 0) {
-        let resp = selectFileGuids(_resp)
-        let updateResp = await modelNaotu.remove({fileGuid: { $in: resp }})
-        if(updateResp) {
-          res.json({
-            response: {
-              error_code: 0,
-              error_message: '',
-              hint_message: '删除成功',
-            }
-          })
-        }
-      }
-      res.json({
-        response: {
-          error_code: 10001,
-          error_message: '',
-          hint_message: '系统错误',
-        }
-      })
-    } else {
-      res.json({
-        response: {
-          error_code: 10002,
-          error_message: '',
-          hint_message: '参数有误',
-        }
-      })
+    if(!(Array.isArray(fileGuidArr) && fileGuidArr.length > 0)) responseJson({res, error_code: 10001})
+    let _fileGuidArr = formatFileGuid(fileGuidArr)
+    let _resp = await findRelatedFiles(_fileGuidArr)
+    if(_resp.length > 0) {
+      let resp = selectFileGuids(_resp)
+      await modelNaotu.remove({fileGuid: { $in: resp }})
     }
+    responseJson({res})
   } catch (error) {
     console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
@@ -451,6 +254,7 @@ let findRelatedFiles = async (fileGuidArr) => {
     return relatedFiles
   } catch (error) {
     console.log(error)
+    responseJson({res, error_code: 20000})
   }
 }
 
@@ -466,6 +270,38 @@ let filterForTrash = async (files) => {
     }
   }
   return output
+}
+
+/**
+ * @param {*} res 
+ * @param {*} error_code 
+ * @param {*} error_message 
+ * @param {*} hint_message 
+ * @param {*} data 
+ */
+let responseJson = ({res, error_code = 0, error_message = '', hint_message, data}) => {
+  switch(error_code){
+    case 0:
+      hint_message = ''
+      break;
+    case 10001:
+      hint_message = '参数错误'
+      break;
+    case 20000:
+      hint_message = '系统错误'
+      break;
+  }
+
+  let resp = {
+    response: {
+      error_code,
+      error_message,
+      hint_message,
+    }
+  } 
+  if(data) resp.data = data
+
+  res.json(resp)
 }
 
 module.exports = {
