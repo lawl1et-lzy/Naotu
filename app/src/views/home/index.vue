@@ -28,10 +28,12 @@
         <template slot-scope="scope">
           <!-- 文件类型 -->
           <router-link v-if="scope.row.fileType === 'file'" :to="{'name': 'NaotuEditor', 'params': { id: scope.row.fileGuid }}">
+            <i class="el-icon-document"></i>
             {{ scope.row.fileName }}{{scope.row.extName}}
           </router-link>
           <!-- 文件夹 -->
           <router-link v-if="scope.row.fileType === 'directory'" :to="{'name': 'Home', 'params': { id: scope.row.fileGuid }}">
+            <i class="el-icon-circle-plus-outline"></i>
             {{ scope.row.fileName }}{{scope.row.extName}}
           </router-link>
         </template>

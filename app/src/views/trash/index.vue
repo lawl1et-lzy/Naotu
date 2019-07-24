@@ -26,10 +26,12 @@
         <template slot-scope="scope">
           <!-- 文件类型 -->
           <template v-if="scope.row.fileType === 'file'">
+            <i class="el-icon-document"></i>
             {{ scope.row.fileName }}{{scope.row.extName}}
           </template>
           <!-- 文件夹 -->
           <template v-if="scope.row.fileType === 'directory'">
+            <i class="el-icon-circle-plus-outline"></i>
             {{ scope.row.fileName }}{{scope.row.extName}}
           </template>
         </template>

@@ -40,14 +40,17 @@ export default {
     },
     // ctrl + s 保存
     handleCtrlSClick () {
-      this.naotuCache = JSON.stringify(this.editor.minder.exportJson())
+      this.naotuCache = this.editor.minder.exportJson()
       this.fetchUpdateFile()
     },
     // request update
     async fetchUpdateFile () {
+      let fileName = this.naotuCache.root.data.text
+      let content = JSON.stringify(this.editor.minder.exportJson())
       let rp = {
         fileGuid: String(this.fileGuid),
-        content: this.naotuCache
+        content,
+        fileName
       }
       let res = await Api.updateFile(rp)
       let { response } = res
