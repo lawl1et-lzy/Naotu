@@ -11,6 +11,7 @@ export default {
   data () {
     return {
       fileGuid: '', // 链接参数
+      fileData: '', // 当前文件数据
       naotuCache: '',
       iframeSec: '',
       publicPath: process.env.BASE_URL
@@ -20,6 +21,9 @@ export default {
     let routeParams = this.$route.params
     this.fileGuid = routeParams.id
     this.fetchQueryFile()
+  },
+  beforeRouteUpdate (to, from, next) {
+    document.title = to.meta.title
   },
   methods: {
     // iframe load
@@ -82,6 +86,7 @@ export default {
     handleQueryData (res) {
       let { response, data } = res
       if (!response.error_code) {
+        this.fileData = data[0]
         this.naotuCache = data[0].content ? JSON.parse(data[0].content) : ''
       } else {
         this.$message({

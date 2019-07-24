@@ -66,7 +66,7 @@ export const constantRoutes = [
       path: '/trash',
       name: 'Trash',
       component: () => import('@/views/trash/index'),
-      meta: { title: '回收站', icon: 'dashboard' }
+      meta: { title: '回收站', icon: 'trash' }
     }]
   },
 
