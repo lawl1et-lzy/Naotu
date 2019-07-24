@@ -1,8 +1,9 @@
 <template>
   <div class="home-container">
     <el-row class="button-group">
+      <el-button v-if="parentGuid" icon="el-icon-back" @click="handleBack">返回上一级</el-button>
       <el-button icon="el-icon-edit" type="primary" @click="handleAddFile">新建脑图</el-button>
-      <el-button icon="el-icon-circle-plus-outline" type="primary" @click="handleAddDirectory">新建文件夹</el-button>
+      <el-button icon="el-icon-circle-plus-outline" @click="handleAddDirectory">新建文件夹</el-button>
       <el-button icon="el-icon-delete" type="danger" @click="handleDeleteMany">删除</el-button>
     </el-row>
     <!-- table -->
@@ -40,20 +41,11 @@
         label="修改时间"
       >
       </el-table-column>
-      <!-- <el-table-column
-        prop="fileSize"
-        label="大小"
-      >
-      </el-table-column> -->
       <el-table-column
         prop="edit"
         label="选项"
       >
         <template slot-scope="scope">
-          <!-- <el-button
-            size="mini"
-            type="success"
-            @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
           <el-button
             size="mini"
             type="danger"
@@ -120,15 +112,16 @@ export default {
     handleRowClick (row) {
       // this.$refs.multipleTable.toggleRowSelection(row)
     },
-    // 编辑
-    // handleEdit (index, row) {
-    //   let { fileGuid } = row
-    //   this.$router.push({'name': 'NaotuEditor', 'params': { id: fileGuid }})
-    // },
     // 删除
     handleDelete (index, row) {
-      let { fileGuid } = row
-      this.fetchRmFile([fileGuid])
+      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let { fileGuid } = row
+        this.fetchRmFile([fileGuid])
+      })
     },
     // 批量删除
     handleDeleteMany () {
@@ -191,13 +184,13 @@ export default {
             fileGuid: row.fileGuid,
             fileName: value
           }
-          this.fetchUpdate(rp)
+          this.fetchRename(rp)
         }
       })
     },
-    // request
-    async fetchUpdate (rp) {
-      let res = await Api.updateFile(rp)
+    // request 重命名
+    async fetchRename (rp) {
+      let res = await Api.rename(rp)
       let { response } = res
       if (!response.error_code) {
         this.$message({
@@ -272,6 +265,10 @@ export default {
         })
         this.fetchQueryDirectory()
       }
+    },
+    // 返回上一级
+    handleBack () {
+      this.$router.go(-1)
     },
     // 格式化事件
     dateParse (timestamp, format = '{y}-{m}-{d} {h}:{i}') {
