@@ -17,12 +17,6 @@ router.post('/api/naotu/add_directory', naotuControler.addDirectory)
 // update
 router.post('/api/naotu/update', naotuControler.update)
 
-// del
-router.post('/api/naotu/del', naotuControler.del)
-
-// rm 
-router.post('/api/naotu/rm', naotuControler.rm)
-
 // queryFile
 router.post('/api/naotu/query_file', naotuControler.queryFile)
 
@@ -32,7 +26,13 @@ router.post('/api/naotu/query_directory', naotuControler.queryDirectoty)
 // queryDirectotyForTrash
 router.post('/api/naotu/query_directory_for_trash', naotuControler.queryDirectotyForTrash)
 
-// revert_files
+// rm 
+router.post('/api/naotu/rm', naotuControler.rm)
+
+// revertFiles
 router.post('/api/naotu/revert_files', naotuControler.revertFiles)
+
+// deleteFiles
+router.post('/api/naotu/delete_files', naotuControler.deleteFiles)
 
 module.exports = router;
