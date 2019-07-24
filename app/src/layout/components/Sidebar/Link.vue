@@ -28,8 +28,17 @@ export default {
       }
       return {
         is: 'router-link',
-        to: url
+        to: this.formatUrl(url)
       }
+    },
+    // /home/:id? => /home
+    formatUrl(url) {
+      let outurl = url;
+      let index = url.indexOf(':')
+      if(~index) {
+        outurl = url.substring(0, index - 1)
+      }
+      return outurl
     }
   }
 }
