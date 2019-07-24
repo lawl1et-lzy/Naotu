@@ -141,7 +141,7 @@ export default {
         }).then(() => {
           let fileGuidArr = []
           delArr.forEach(item => {
-            fileGuidArr.push({fileGuid: item.fileGuid})
+            fileGuidArr.push(item.fileGuid)
           })
           this.fetchRmFile(fileGuidArr)
         })
@@ -153,7 +153,7 @@ export default {
         })
       }
     },
-    // 删除
+    // request 删除
     async fetchRmFile (fileGuidArr) {
       let rp = {
         fileGuidArr

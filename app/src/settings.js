@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Naotu',
+  title: '脑图',
 
   /**
    * @type {boolean} true | false
