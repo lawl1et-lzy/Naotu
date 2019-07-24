@@ -384,20 +384,23 @@ let revertFiles = async (req, res, next) => {
  * 递归遍历出需要的 fileGuid
  * @param {Array} fileGuidArr 
  */
-let relatedFiles = []
 let findRelatedFiles = async (fileGuidArr) => {
   try {
-    for(let i = 0; i < fileGuidArr.length; i++) {
-      let { fileGuid } = fileGuidArr[i]
-      // 查找当前 fileGuid 的数据
-      let file = await modelNaotu.findOne({fileGuid})
-      // 查找子目录数据
-      let subFile = await modelNaotu.find({parentGuid: file.fileGuid})
-      relatedFiles.push(file.fileGuid)
-      if(subFile.length > 0) {
-        await findRelatedFiles(subFile)
+    let relatedFiles = []
+    let fn = async (fileGuidArr) => {
+      for(let i = 0; i < fileGuidArr.length; i++) {
+        let { fileGuid } = fileGuidArr[i]
+        // 查找当前 fileGuid 的数据
+        let file = await modelNaotu.findOne({fileGuid})
+        // 查找子目录数据
+        let subFile = await modelNaotu.find({parentGuid: file.fileGuid})
+        relatedFiles.push(file.fileGuid)
+        if(subFile.length > 0) {
+          await fn(subFile)
+        }
       }
     }
+    await fn(fileGuidArr)
     return relatedFiles
   } catch (error) {
     console.log(error)
