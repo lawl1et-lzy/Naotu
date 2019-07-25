@@ -56,7 +56,10 @@ export const constantRoutes = [
     path: '/naotueditor/:id',
     name: 'NaotuEditor',
     component: () => import('@/views/naotuEditor/index'),
-    hidden: true
+    hidden: true,
+    meta: {
+      title: '脑图编辑'
+    }
   },
   {
     path: '/trash',
