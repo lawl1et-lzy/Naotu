@@ -3,7 +3,7 @@ const Mongoose = require('mongoose');
 const modelNaotu = Mongoose.model('naotu');
 const base = require('../util/base.js');
 
-const ROOT_GUID = 'lawliet111'
+const ROOT_GUID = 'qingqinguserguid'
 
 // 获取 root guid
 let getRootGuid = async (req, res, next) => {
@@ -69,7 +69,7 @@ let reName = async (req, res, next) => {
   let { fileGuid, fileName } = req.body
   if(!(fileGuid && fileName)) responseJson({res, error_code: 10001})
   try {
-    await modelNaotu.update({ fileGuid }, { fileName })
+    await modelNaotu.updateOne({ fileGuid }, { fileName })
     responseJson({res})
   } catch (error) {
     console.log(error)
@@ -85,7 +85,7 @@ let update = async (req, res, next) => {
     let fileGuid = rp.fileGuid
     let modifyDoc = {...rp}
     delete modifyDoc.fileGuid
-    await modelNaotu.update({ fileGuid }, modifyDoc)
+    await modelNaotu.updateOne({ fileGuid }, modifyDoc)
     responseJson({res})
   } catch (error) {
     console.log(error)

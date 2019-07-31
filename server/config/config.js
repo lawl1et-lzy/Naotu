@@ -1,8 +1,10 @@
 module.exports = {
   mongo: {
-    name: 'lawliet',
-    host: 'localhost',
-    port: 27017,
-    writeConcern: -1
+    name: 'naotu',
+    host: '127.0.0.1',
+    port: 27018,
+    writeConcern: -1,
+    user: 'qingqingnaotu',
+    pwd: '123456'
   }
 }
