@@ -24,8 +24,8 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
-  outputDir: 'dist',
+  publicPath: './',
+  outputDir: 'naotu',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
@@ -47,7 +47,7 @@ module.exports = {
       //   }
       // }
       [process.env.VUE_APP_BASE_API]: {
-        target: 'https://127.0.0.1:3001',
+        target: 'https://106.15.234.0:3001',
         secure: false
       }
     }

@@ -18,17 +18,16 @@ if (process.env.npm_config_preview || rawArgv.includes('--preview')) {
 
   app.use(
     publicPath,
-    serveStatic('./dist', {
+    serveStatic('./naotu', {
       index: ['index.html', '/']
     })
   )
 
-  app.listen(port, function () {
+  app.listen(port, function() {
     console.log(chalk.green(`> Preview at  http://localhost:${port}${publicPath}`))
     if (report) {
       console.log(chalk.green(`> Report at  http://localhost:${port}${publicPath}report.html`))
     }
-
   })
 } else {
   run(`vue-cli-service build ${args}`)

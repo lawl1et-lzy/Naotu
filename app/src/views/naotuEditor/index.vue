@@ -1,6 +1,6 @@
 <template>
   <div class="wrap-editor">
-    <iframe ref="minderIframe" id="minderIframe" name="minderIframe" :src="`${publicPath}kityminder-editor/dist/index.html`" @load="handleLoad"></iframe>
+    <iframe id="minderIframe" ref="minderIframe" name="minderIframe" :src="`${publicPath}kityminder-editor/dist/index.html`" @load="handleLoad"/>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import Api from '@/api/index.api'
 export default {
   name: 'NaotuEditor',
-  data () {
+  data() {
     return {
       fileGuid: '', // 链接参数
       fileData: '', // 当前文件数据
@@ -17,17 +17,17 @@ export default {
       publicPath: process.env.BASE_URL
     }
   },
-  created () {
-    let routeParams = this.$route.params
+  created() {
+    const routeParams = this.$route.params
     this.fileGuid = routeParams.id
     this.fetchQueryFile()
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     document.title = to.meta.title
   },
   methods: {
     // iframe load
-    handleLoad () {
+    handleLoad() {
       this.editor = window.frames['minderIframe'].editor
       if (this.naotuCache) {
         this.editor.minder.importJson(this.naotuCache)
@@ -43,21 +43,21 @@ export default {
       }, false)
     },
     // ctrl + s 保存
-    handleCtrlSClick () {
+    handleCtrlSClick() {
       this.naotuCache = this.editor.minder.exportJson()
       this.fetchUpdateFile()
     },
     // request update
-    async fetchUpdateFile () {
-      let fileName = this.naotuCache.root.data.text
-      let content = JSON.stringify(this.editor.minder.exportJson())
-      let rp = {
+    async fetchUpdateFile() {
+      const fileName = this.naotuCache.root.data.text
+      const content = JSON.stringify(this.editor.minder.exportJson())
+      const rp = {
         fileGuid: String(this.fileGuid),
         content,
         fileName
       }
-      let res = await Api.updateFile(rp)
-      let { response } = res
+      const res = await Api.updateFile(rp)
+      const { response } = res
       if (!response.error_code) {
         this.$message({
           message: '保存成功',
@@ -73,18 +73,18 @@ export default {
       }
     },
     // 获取 列表数据
-    async fetchQueryFile () {
-      let rp = {
+    async fetchQueryFile() {
+      const rp = {
         fileGuid: this.fileGuid
       }
-      let res = await Api.queryFile(rp)
+      const res = await Api.queryFile(rp)
       if (res) {
         this.handleQueryData(res)
       }
     },
     // 查询脑图
-    handleQueryData (res) {
-      let { response, data } = res
+    handleQueryData(res) {
+      const { response, data } = res
       if (!response.error_code) {
         this.fileData = data[0]
         this.naotuCache = data[0].content ? JSON.parse(data[0].content) : ''
