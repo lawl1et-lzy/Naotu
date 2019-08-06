@@ -157,7 +157,7 @@ div.minder-editor-container {
 }
 .km-btn-item .km-btn-icon {
   display: inline-block;
-  background: url(images/icons.png) no-repeat;
+  background: url(../../dist/images/icons.png) no-repeat;
   background-position: 0 20px;
   width: 20px;
   height: 20px;
@@ -242,7 +242,7 @@ div.minder-editor-container {
 }
 .btn-group-vertical .hyperlink {
   height: 25px;
-  background: url(images/icons.png) no-repeat center -100px;
+  background: url(../../dist/images/icons.png) no-repeat center -100px;
 }
 .btn-group-vertical .hyperlink-caption {
   height: 20px;
@@ -276,7 +276,7 @@ div.minder-editor-container {
 }
 .btn-group-vertical .image-btn {
   height: 25px;
-  background: url(images/icons.png) no-repeat center -125px;
+  background: url(../../dist/images/icons.png) no-repeat center -125px;
 }
 .btn-group-vertical .image-btn-caption {
   height: 20px;
@@ -394,7 +394,7 @@ div.minder-editor-container {
 }
 .btn-group-vertical .note-btn {
   height: 25px;
-  background: url(images/icons.png) no-repeat center -1150px;
+  background: url(../../dist/images/icons.png) no-repeat center -1150px;
 }
 .btn-group-vertical .note-btn-caption {
   height: 20px;
@@ -661,7 +661,7 @@ div.minder-editor-container {
   padding: 1px;
 }
 .tab-content .km-priority .km-priority-item .km-priority-icon {
-  background: url(images/iconpriority.png) repeat-y;
+  background: url(../../dist/images/iconpriority.png) repeat-y;
   background-color: transparent;
 }
 .tab-content .km-priority .km-priority-item .km-priority-icon.priority-0 {
@@ -707,7 +707,7 @@ div.minder-editor-container {
   padding: 1px;
 }
 .tab-content .km-progress .km-progress-item .km-progress-icon {
-  background: url(images/iconprogress.png) repeat-y;
+  background: url(../../dist/images/iconprogress.png) repeat-y;
   background-color: transparent;
 }
 .tab-content .km-progress .km-progress-item .km-progress-icon.progress-0 {
@@ -834,7 +834,7 @@ div.minder-editor-container {
   display: inline-block;
   width: 50px;
   height: 40px;
-  background-image: url(images/template.png);
+  background-image: url(../../dist/images/template.png);
   background-repeat: no-repeat;
 }
 .temp-item.default {
@@ -966,7 +966,7 @@ div a.theme-item {
   background-color: #c4d0ee;
 }
 .reset-layout-icon {
-  background: url(images/icons.png) no-repeat;
+  background: url(../../dist/images/icons.png) no-repeat;
   background-position: 0 -150px;
 }
 .style-operator {
@@ -979,7 +979,7 @@ div a.theme-item {
   vertical-align: middle;
 }
 .clear-style-icon {
-  background: url(images/icons.png) no-repeat;
+  background: url(../../dist/images/icons.png) no-repeat;
   background-position: 0 -175px;
 }
 .s-btn-group-vertical {
@@ -1024,14 +1024,14 @@ div a.theme-item {
   background-color: #c4d0ee;
 }
 .copy-style-icon {
-  background: url(images/icons.png) no-repeat;
+  background: url(../../dist/images/icons.png) no-repeat;
   background-position: 0 -200px;
 }
 .paste-style-wrap {
   display: block;
 }
 .paste-style-icon {
-  background: url(images/icons.png) no-repeat;
+  background: url(../../dist/images/icons.png) no-repeat;
   background-position: 0 -220px;
 }
 .font-operator {
@@ -1080,7 +1080,7 @@ div a.theme-item {
 .font-bold,
 .font-italics {
   display: inline-block;
-  background: url(images/icons.png) no-repeat;
+  background: url(../../dist/images/icons.png) no-repeat;
   cursor: pointer;
   margin: 0 3px;
 }
@@ -1196,7 +1196,7 @@ div a.theme-item {
   text-align: center;
   cursor: default;
   color: #000;
-  background: url(images/icons.png) no-repeat center -1260px;
+  background: url(../../dist/images/icons.png) no-repeat center -1260px;
 }
 .bg-color-wrap .quick-bg-color:hover {
   background-color: #eff3fa;
@@ -1262,7 +1262,7 @@ div a.theme-item {
 }
 .btn-group-vertical .expand {
   height: 25px;
-  background: url(images/icons.png) no-repeat 0 -995px;
+  background: url(../../dist/images/icons.png) no-repeat 0 -995px;
   background-position-x: 50%;
 }
 .btn-group-vertical .expand-caption {
@@ -1298,7 +1298,7 @@ div a.theme-item {
 }
 .btn-group-vertical .select {
   height: 25px;
-  background: url(images/icons.png) no-repeat 7px -1175px;
+  background: url(../../dist/images/icons.png) no-repeat 7px -1175px;
 }
 .btn-group-vertical .select-caption {
   height: 20px;
@@ -1333,7 +1333,7 @@ div a.theme-item {
 }
 .btn-group-vertical .search {
   height: 25px;
-  background: url(images/icons.png) no-repeat 0 -345px;
+  background: url(../../dist/images/icons.png) no-repeat 0 -345px;
   background-position-x: 50%;
 }
 .btn-group-vertical .search-caption {
@@ -1435,7 +1435,7 @@ div a.theme-item {
   text-align: center;
 }
 .nav-bar .nav-btn .icon {
-  background: url(images/icons.png);
+  background: url(../../dist/images/icons.png);
   width: 20px;
   height: 20px;
   margin: 2px auto;
