@@ -65,6 +65,8 @@ export const constantRoutes = [
     path: '/trash',
     component: Layout,
     redirect: '/trash',
+    hidden: true,
+    name: 'TrashCom',
     children: [{
       path: '/trash',
       name: 'Trash',
@@ -85,6 +87,19 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
+
+// qingqingtst: 设置回收站显隐
+router.beforeEach((to, from, next) => {
+  const qingqingtst = to.query.qingqingtst
+  if (qingqingtst) {
+    const routes = router.options && router.options.routes
+    if (Array.isArray(routes) && routes.length > 0) {
+      const trash = routes.find(item => item.name === 'TrashCom')
+      if (trash) trash.hidden = false
+    }
+  }
+  next()
+})
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
