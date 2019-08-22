@@ -47,7 +47,7 @@ module.exports = {
       //   }
       // }
       [process.env.VUE_APP_BASE_API]: {
-        target: 'https://106.15.234.0:3001',
+        target: 'http://127.0.0.1:3000',
         secure: false
       }
     }
