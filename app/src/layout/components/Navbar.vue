@@ -29,6 +29,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import Api from '@/api/user'
 
 export default {
   components: {
@@ -47,7 +48,16 @@ export default {
     },
     async logout() {
       // await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      Api.loginout()
+        .then(res => {
+          let { response } = res
+          if(!response.error_code) {
+            this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }

@@ -56,6 +56,7 @@
 import { validUsername } from '@/utils/validate'
 import { setToken } from '@/utils/auth'
 import { mapMutations } from 'vuex'
+import Api from '@/api/user'
 
 export default {
   name: 'Login',
@@ -76,12 +77,12 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        username: [{ required: true, trigger: 'blur' }],
+        password: [{ required: true, trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',
@@ -109,9 +110,16 @@ export default {
       })
     },
     handleLogin() {
-      this.SET_TOKEN('lawliet')
-      setToken('lawliet')
-      this.$router.push({ path: '/' })
+      Api.login(this.loginForm)
+        .then(res => {
+          let { response, data } = res
+          if(!response.error_code) {
+            this.$router.push({ path: '/' })
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
       // this.$refs.loginForm.validate(valid => {
       //   if (valid) {
       //     this.loading = true

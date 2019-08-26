@@ -64,6 +64,7 @@
 
 <script>
 import Api from '@/api/index.api'
+import { getToken } from '@/utils/auth'
 import { parseTime } from '@/utils/index.js'
 export default {
   name: 'Naotu',
@@ -77,6 +78,8 @@ export default {
   },
   created () {
     this.init()
+    console.log('naotu',getToken('naotu'))
+    console.log('user',getToken('user'))
   },
   methods: {
     // 初始化必要参数

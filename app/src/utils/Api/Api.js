@@ -1,5 +1,6 @@
 import Axios from 'axios'
-
+import router from '../../router';
+import { removeToken } from '@/utils/auth'
 // 设置请求时长
 const axios = Axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -9,34 +10,37 @@ const axios = Axios.create({
 // 请求拦截器
 axios.interceptors.request.use(
   (config) => {
-    // console.log('request config', config)
-    // TODO: do something
     return config
   },
   (error) => {
-    console.log('request error', error)
-    // TODO: do something
     return Promise.reject(error)
   }
 )
 
 // 响应拦截器
 axios.interceptors.response.use(
-  (response) => {
-    // console.log('response', response)
+  (res) => {
     let {
       status,
       data
-    } = response
-    if (status === 200 || status === 304) {
-      return data
-    } else {
-      Promise.reject(response)
+    } = res
+    switch(status) {
+      case 200:
+      case 304:
+        let { response } = data
+        if(Number(response.error_code) === 403) {
+          removeToken()
+          router.push({path: '/login'})
+          return false
+        }
+        return data;
+      default:
+        Promise.reject(res)
+        break;
     }
   },
   (error) => {
     console.log('response error', error)
-    // TODO: do something
     return Promise.reject(error)
   }
 )
