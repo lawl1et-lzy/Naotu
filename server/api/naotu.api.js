@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const naotuControler = require('./controler/naotu.controler.js')
+const naotuControler = require('../controler/naotu.controler.js')
 
 // getRootGuid
 router.post('/api/naotu/get_root_guid', naotuControler.getRootGuid)
