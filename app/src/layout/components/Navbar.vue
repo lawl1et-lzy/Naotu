@@ -7,7 +7,10 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="require('@/icons/avatar.jpg')" class="user-avatar">
+          <!-- <img :src="require('@/icons/avatar.jpg')" class="user-avatar"> -->
+          <div class="user-avatar">
+            {{ userInfo ? userInfo.realname : '' }}
+          </div>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -26,10 +29,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Api from '@/api/user'
+import { getToken } from '@/utils/auth'
 
 export default {
   components: {
@@ -39,10 +43,13 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'userInfo'
     ])
   },
   methods: {
+    ...mapActions('user', [
+      'getUserInfo'
+    ]),
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -58,7 +65,19 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    async initData() {
+      try {
+        const user = getToken()
+        const userid = user ? JSON.parse(user).userid : '' 
+        if(userid) await this.getUserInfo()
+      } catch (error) {
+        console.log('initData', error)
+      }
     }
+  },
+  created() {
+    this.initData()
   }
 }
 </script>
@@ -123,8 +142,10 @@ export default {
         position: relative;
 
         .user-avatar {
+          font-size: 16px;
+          font-weight: 600;
           cursor: pointer;
-          width: 40px;
+          // width: 40px;
           height: 40px;
           border-radius: 10px;
         }

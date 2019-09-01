@@ -16,11 +16,10 @@ class Api {
     })
   }
 
-  static userinfo(data) {
+  static getUserInfo() {
     return axios({
       method: 'POST',
-      url: `/naotu/userinfo`,
-      data
+      url: `/naotu/get_user_info`
     })
   }
 }
