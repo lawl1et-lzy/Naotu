@@ -1,11 +1,21 @@
 const Mongoose = require('mongoose')
 const Schema = Mongoose.Schema
 
-let naotu = {
+const file = {
+  id: {
+    type: String,
+    default: Mongoose.Types.ObjectId
+  },
+  // 用户ID
+  userid: {
+    type: String,
+    required:true
+  },
   // 父级文件夹ID
-  parentGuid: String,
-  // 文件ID
-  fileGuid: String,
+  parentid: {
+    type: String,
+    required:true
+  },
   // 文件名
   fileName: {
     type: String,
@@ -16,11 +26,13 @@ let naotu = {
    * enum {
    *  directory = 1
    *  file = 2
+   *  root = 3
    * }
    */
   fileType: {
     type: String,
-    default: 'file'
+    default: 'file',
+    required:true
   }, 
   // 是否删除
   isDelete: {
@@ -52,5 +64,5 @@ let config = {
   }
 }
 
-let Naotu = new Schema(naotu, config)
-Mongoose.model('naotu', Naotu)
+let File = new Schema(file, config)
+Mongoose.model('file', File)

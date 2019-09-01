@@ -1,4 +1,4 @@
-const apiWhiteList = require('../api/whitelist.api.js');
+const apiWhiteList = require('../config/whitelist.js');
 // 不在白名单中，执行session验证
 const validateSession = (req, res, next) => {
   if(Array.isArray(apiWhiteList) && apiWhiteList.length > 0) {
@@ -13,6 +13,7 @@ const validateSession = (req, res, next) => {
           }
         }
         res.json(resp)
+        return false
       }
     }
   }

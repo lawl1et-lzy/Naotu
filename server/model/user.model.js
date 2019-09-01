@@ -1,10 +1,15 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema
 
-let user = {
+const user = {
+  id: {
+    type: String,
+    default: Mongoose.Types.ObjectId
+  },
   username: {
     type: String,
-    trim: true
+    trim: true,
+    required:true
   },
   password: {
     type: String,
@@ -25,20 +30,18 @@ let user = {
   address: {
     type: String,
   },
-  status: {
-    type: Number,
+  department: {
+    type: String,
   },
   group: {
-    type: Schema.Types.ObjectId,
-    ref: 'group'
+    type: String,
   },
-  catgory: [{
-    type: Schema.Types.ObjectId,
-    ref: 'catgory'
-  }],
-  naotus: {
-    type: Schema.Types.ObjectId,
-    ref: 'naotu'
+  isDelete: {
+    type: Boolean,
+    default: false
+  },
+  deleteTime: {
+    type: Date,
   }
 }
 

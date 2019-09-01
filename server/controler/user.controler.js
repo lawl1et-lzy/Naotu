@@ -1,44 +1,52 @@
-require('../db/model/user.model.js')
 const MD5 = require('md5.js')
+const UserDao = require('../dao/user.dao.js')
+const userDao = new UserDao();
 const Mongoose = require('mongoose');
-const modelUser = Mongoose.model('user');
-
-// 生成账号
-// const createAccount = async (username, password) => {
-//   const md5pwd = new MD5().update(password).digest('hex')
-//   let userModel = new modelUser({
-//     username,
-//     password: md5pwd
-//   })
-//   await userModel.save()
-// }
-
-// createAccount('niya', '123456')
-
 // 登录
 const login = async (req, res, next) => {
   let { username, password } = req.body
   if(!username) responseJson({res, error_code: 10001, hint_message: '用户名不正确'})
-  if(!password) responseJson({res, error_code: 10003, hint_message: '密码不能为空'})
+  if(!password) responseJson({res, error_code: 10002, hint_message: '密码不能为空'})
   const md5pwd = new MD5().update(password).digest('hex')
-  const userDoc = await modelUser.findOne({ username })
+  const userDoc = await userDao.findOne({ username })
   if(userDoc) {
     if(md5pwd === userDoc.password) {
-      let { username, _id } = userDoc
-      let user = {username, token: _id}
+      let { username, id } = userDoc
+      let user = {username, userid: id}
       req.session.user = user
       res.cookie("user", JSON.stringify(user), {
         path: '/',
         maxAge: 7 * 24 * 3600 * 1000
       })
-      responseJson({res, data: {username, token: _id}})
+      responseJson({res, data: {username, userid: id}})
     } else {
-      responseJson({res, error_code: 10004, hint_message: '密码不正确'})
+      responseJson({res, error_code: 10003, hint_message: '密码不正确'})
     }
   } else {
-    responseJson({res, error_code: 10005, hint_message: '暂无此用户'})
+    responseJson({res, error_code: 10004, hint_message: '暂无此用户'})
   }
 }
+
+// 获取用户基本信息
+const userinfo = async (req, res) => {
+  try {
+    const { userid } = JSON.parse(req.cookies.user)
+    const data = userDao.findOne({
+      id: userid
+    }, { _id: 0 })
+    responseJson({res, data})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
+  }
+}
+
+// const user = {
+//   username: 'lawliet',
+//   password: new MD5().update('123456').digest('hex')
+// }
+
+// userDao.create(user)
 
 // 登出
 const loginout = async (req, res, next) => {
@@ -57,16 +65,10 @@ const loginout = async (req, res, next) => {
  * @param {*} hint_message 
  * @param {*} data 
  */
-let responseJson = ({res, error_code = 0, error_message = '', hint_message, data}) => {
+const responseJson = ({res, error_code = 0, error_message = '', hint_message, data}) => {
   switch(error_code){
     case 0:
       hint_message = ''
-      break;
-    case 10002:
-      hint_message = '用户尚未登录'
-      break;
-    case 10001:
-      hint_message = '参数错误'
       break;
     case 20000:
       hint_message = '系统错误'
@@ -88,5 +90,6 @@ let responseJson = ({res, error_code = 0, error_message = '', hint_message, data
 
 module.exports = {
   login,
-  loginout
+  loginout,
+  userinfo
 }
