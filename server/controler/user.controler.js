@@ -4,36 +4,46 @@ const userDao = new UserDao();
 const Mongoose = require('mongoose');
 // 登录
 const login = async (req, res, next) => {
-  let { username, password } = req.body
-  if(!username) responseJson({res, error_code: 10001, hint_message: '用户名不正确'})
-  if(!password) responseJson({res, error_code: 10002, hint_message: '密码不能为空'})
-  const md5pwd = new MD5().update(password).digest('hex')
-  const userDoc = await userDao.findOne({ username })
-  if(userDoc) {
-    if(md5pwd === userDoc.password) {
-      let { username, id } = userDoc
-      let user = {username, userid: id}
-      req.session.user = user
-      res.cookie("user", JSON.stringify(user), {
-        path: '/',
-        maxAge: 7 * 24 * 3600 * 1000
-      })
-      responseJson({res, data: {username, userid: id}})
+  try {
+    let { username, password } = req.body
+    if(!username) responseJson({res, error_code: 10001, hint_message: '用户名不正确'})
+    if(!password) responseJson({res, error_code: 10002, hint_message: '密码不能为空'})
+    const md5pwd = new MD5().update(password).digest('hex')
+    const userDoc = await userDao.findOne({ username })
+    if(userDoc) {
+      if(md5pwd === userDoc.password) {
+        let { username, id } = userDoc
+        let user = {username, userid: id}
+        req.session.user = user
+        res.cookie("user", JSON.stringify(user), {
+          path: '/',
+          maxAge: 7 * 24 * 3600 * 1000
+        })
+        responseJson({res, data: {username, userid: id}})
+      } else {
+        responseJson({res, error_code: 10003, hint_message: '密码不正确'})
+      }
     } else {
-      responseJson({res, error_code: 10003, hint_message: '密码不正确'})
+      responseJson({res, error_code: 10004, hint_message: '暂无此用户'})
     }
-  } else {
-    responseJson({res, error_code: 10004, hint_message: '暂无此用户'})
+  } catch (error) {
+    console.log(error)
+    responseJson({res, error_code: 2000})
   }
 }
 
 // 获取用户基本信息
-const userinfo = async (req, res) => {
+const getUserInfo = async (req, res) => {
   try {
     const { userid } = JSON.parse(req.cookies.user)
-    const data = userDao.findOne({
+    const data = await userDao.findOne({
       id: userid
-    }, { _id: 0 })
+    }, { 
+      _id: 0,
+      realname: 1,
+      id: 1,
+      username: 1
+    })
     responseJson({res, data})
   } catch (error) {
     console.log(error)
@@ -42,8 +52,9 @@ const userinfo = async (req, res) => {
 }
 
 // const user = {
-//   username: 'lawliet',
-//   password: new MD5().update('123456').digest('hex')
+//   username: 'niya',
+//   password: new MD5().update('123456').digest('hex'),
+//   realname: '尼亚'
 // }
 
 // userDao.create(user)
@@ -91,5 +102,5 @@ const responseJson = ({res, error_code = 0, error_message = '', hint_message, da
 module.exports = {
   login,
   loginout,
-  userinfo
+  getUserInfo
 }
