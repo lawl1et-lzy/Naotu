@@ -58,11 +58,11 @@ class Api {
       data
     })
   }
-  // 获取 ROOT_GUID
-  static getRootGuid (data) {
+  // 获取 ROOT_ID
+  static getRootid (data) {
     return axios({
       method: 'POST',
-      url: `/naotu/get_root_guid`,
+      url: `/naotu/get_root_id`,
       data
     })
   }

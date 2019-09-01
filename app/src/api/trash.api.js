@@ -2,14 +2,12 @@
 import axios from '@/utils/Api/Api.js'
 
 class Api {
-  // queryDirectotyForTrash
-  static queryDirectotyForTrash () {
+  static querySelfDirectotyForTrash () {
     return axios({
       method: 'POST',
-      url: `/naotu/query_directory_for_trash`,
+      url: `/naotu/query_self_directory_for_trash`,
     })
   }
-  // revertFiles
   static revertFiles (data) {
     return axios({
       method: 'POST',
@@ -17,7 +15,6 @@ class Api {
       data
     })
   }
-   // deleteFiles
    static deleteFiles (data) {
     return axios({
       method: 'POST',

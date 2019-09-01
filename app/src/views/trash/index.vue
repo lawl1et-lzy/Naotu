@@ -83,9 +83,13 @@ export default {
     },
     // 获取 列表数据
     async fetchQueryDirectory () {
-      let resQuery = await Api.queryDirectotyForTrash()
-      if (resQuery) {
-        this.handleQueryData(resQuery)
+      try {
+        let resQuery = await Api.querySelfDirectotyForTrash()
+        if (resQuery) {
+          this.handleQueryData(resQuery)
+        }
+      } catch (error) {
+        console.log('fetchQueryDirectory', error)
       }
     },
     // 处理查询数据
@@ -116,8 +120,8 @@ export default {
     },
     // 删除单个
     handleDeleteOne (index, row) {
-      let { fileGuid } = row
-      this.fetchDeleteFile([fileGuid])
+      let { id } = row
+      this.fetchDeleteFile([id])
     },
     // 批量删除
     handleDeleteSelected () {
@@ -128,11 +132,11 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let fileGuidArr = []
+          let ids = []
           delArr.forEach(item => {
-            fileGuidArr.push(item.fileGuid)
+            ids.push(item.id)
           })
-          this.fetchDeleteFile(fileGuidArr)
+          this.fetchDeleteFile(ids)
         })
       } else {
         this.$message({
@@ -143,36 +147,40 @@ export default {
       }
     },
     // request 删除
-    async fetchDeleteFile (fileGuidArr) {
-      let rp = {
-        fileGuidArr
-      }
-      let res = await Api.deleteFiles(rp)
-      let { response } = res
-      if (!response.error_code) {
-        this.$message({
-          message: '删除成功',
-          center: true,
-          duration: 2 * 1000
-        })
-        this.fetchQueryDirectory()
-      } else {
-        this.$message({
-          message: response.hint_message,
-          center: true,
-          duration: 2 * 1000
-        })
+    async fetchDeleteFile (ids) {
+      try {
+        const rp = {
+          ids
+        }
+        const res = await Api.deleteFiles(rp)
+        let { response } = res
+        if (!response.error_code) {
+          this.$message({
+            message: '删除成功',
+            center: true,
+            duration: 2 * 1000
+          })
+          this.fetchQueryDirectory()
+        } else {
+          this.$message({
+            message: response.hint_message,
+            center: true,
+            duration: 2 * 1000
+          })
+        }
+      } catch (error) {
+        console.log('fetchDeleteFile', error)
       }
     },
     // 批量还原
     async handleRevertSelected () {
       let arr = this.multipleSelection
       if(Array.isArray(arr) && arr.length > 0) {
-        let fileGuidArr = []
+        let ids = []
         arr.forEach(item => {
-          fileGuidArr.push(item.fileGuid)
+          ids.push(item.id)
         })
-        this.fetchRevertFile(fileGuidArr)
+        this.fetchRevertFile(ids)
       } else {
         this.$message({
           message: '请选择',
@@ -183,29 +191,33 @@ export default {
     },
     // 单个还原
     handleRevertOne (index, row) {
-      let { fileGuid } = row
-      this.fetchRevertFile([fileGuid])
+      const { id } = row
+      this.fetchRevertFile([id])
     },
     // request 还原
-    async fetchRevertFile (fileGuidArr) {
-      let rp = {
-        fileGuidArr
-      }
-      let res = await Api.revertFiles(rp)
-      let { response } = res
-      if (!response.error_code) {
-        this.$message({
-          message: '还原成功',
-          center: true,
-          duration: 2 * 1000
-        })
-        this.fetchQueryDirectory()
-      } else {
-        this.$message({
-          message: response.hint_message,
-          center: true,
-          duration: 2 * 1000
-        })
+    async fetchRevertFile (ids) {
+      try {
+        const rp = {
+          ids
+        }
+        let res = await Api.revertFiles(rp)
+        let { response } = res
+        if (!response.error_code) {
+          this.$message({
+            message: '还原成功',
+            center: true,
+            duration: 2 * 1000
+          })
+          this.fetchQueryDirectory()
+        } else {
+          this.$message({
+            message: response.hint_message,
+            center: true,
+            duration: 2 * 1000
+          })
+        }
+      } catch (error) {
+        console.log('fetchRevertFile', error)
       }
     },
     // 格式化事件

@@ -10,7 +10,7 @@ export default {
   name: 'NaotuEditor',
   data() {
     return {
-      fileGuid: '', // 链接参数
+      id: '', // 链接参数
       fileData: '', // 当前文件数据
       naotuCache: '',
       iframeSec: '',
@@ -19,7 +19,7 @@ export default {
   },
   created() {
     const routeParams = this.$route.params
-    this.fileGuid = routeParams.id
+    this.id = routeParams.id
     this.fetchQueryFile()
   },
   beforeRouteUpdate(to, from, next) {
@@ -52,7 +52,7 @@ export default {
       const fileName = this.naotuCache.root.data.text
       const content = JSON.stringify(this.editor.minder.exportJson())
       const rp = {
-        fileGuid: String(this.fileGuid),
+        id: String(this.id),
         content,
         fileName
       }
@@ -74,12 +74,16 @@ export default {
     },
     // 获取 列表数据
     async fetchQueryFile() {
-      const rp = {
-        fileGuid: this.fileGuid
-      }
-      const res = await Api.queryFile(rp)
-      if (res) {
-        this.handleQueryData(res)
+      try {
+        const rp = {
+          id: this.id
+        }
+        const res = await Api.queryFile(rp)
+        if (res) {
+          this.handleQueryData(res)
+        }
+      } catch (error) {
+        console.log('fetchQueryFile ------->', error)
       }
     },
     // 查询脑图

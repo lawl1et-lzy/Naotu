@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <el-row class="button-group">
-      <el-button v-if="parentGuid" icon="el-icon-back" @click="handleBack">返回上一级</el-button>
+      <el-button v-if="showPreBtn" icon="el-icon-back" @click="handleBack">返回上一级</el-button>
       <el-button icon="el-icon-edit" type="primary" @click="handleAddFile">新建脑图</el-button>
       <el-button icon="el-icon-circle-plus-outline" @click="handleAddDirectory">新建文件夹</el-button>
       <el-button icon="el-icon-delete" type="danger" @click="handleDeleteMany">删除</el-button>
@@ -18,8 +18,7 @@
       <!-- 多选框 -->
       <el-table-column
         type="selection"
-      >
-      </el-table-column>
+      />
       <!-- 文件名 -->
       <el-table-column
         prop="fileName"
@@ -27,22 +26,21 @@
       >
         <template slot-scope="scope">
           <!-- 文件类型 -->
-          <router-link v-if="scope.row.fileType === 'file'" :to="{'name': 'NaotuEditor', 'params': { id: scope.row.fileGuid }}">
-            <i class="el-icon-document"></i>
-            {{ scope.row.fileName }}{{scope.row.extName}}
+          <router-link v-if="scope.row.fileType === 'file'" :to="{'name': 'NaotuEditor', 'params': { id: scope.row.id }}">
+            <i class="el-icon-document" />
+            {{ scope.row.fileName }}{{ scope.row.extName }}
           </router-link>
           <!-- 文件夹 -->
-          <router-link v-if="scope.row.fileType === 'directory'" :to="{'name': 'Home', 'params': { id: scope.row.fileGuid }}">
-            <i class="el-icon-circle-plus-outline"></i>
-            {{ scope.row.fileName }}{{scope.row.extName}}
+          <router-link v-if="scope.row.fileType === 'directory'" :to="{'name': 'Home', 'params': { id: scope.row.id }}">
+            <i class="el-icon-circle-plus-outline" />
+            {{ scope.row.fileName }}{{ scope.row.extName }}
           </router-link>
         </template>
       </el-table-column>
       <el-table-column
         prop="updateTime"
         label="修改时间"
-      >
-      </el-table-column>
+      />
       <el-table-column
         prop="edit"
         label="选项"
@@ -51,11 +49,13 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            @click="handleDelete(scope.$index, scope.row)"
+          >删除</el-button>
           <el-button
             size="mini"
             type="danger"
-            @click="handleRename(scope.$index, scope.row)">重命名</el-button>
+            @click="handleRename(scope.$index, scope.row)"
+          >重命名</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,84 +64,92 @@
 
 <script>
 import Api from '@/api/index.api'
-import { getToken } from '@/utils/auth'
 import { parseTime } from '@/utils/index.js'
 export default {
   name: 'Naotu',
-  data () {
+  data() {
     return {
       multipleSelection: [], // 多选框选项
       tableData: [], // 表格数据
-      rootGuid: '', // ROOT_GUID
-      parentGuid: '', // 父 guid
+      parentid: '', // 父 id
+      showPreBtn: false, // 是否显示上一级
     }
   },
-  created () {
+  created() {
     this.init()
-    console.log('naotu',getToken('naotu'))
-    console.log('user',getToken('user'))
   },
   methods: {
     // 初始化必要参数
     init() {
-      let up = this.$route.params
-      this.parentGuid = up.id
-      if(this.parentGuid) {
+      const up = this.$route.params
+      this.parentid = up.id
+      if (this.parentid) {
+        this.showPreBtn = true
         this.fetchQueryDirectory()
       } else {
-        this.fetchRootGuid()
+        this.fetchRootid()
       }
     },
     // 获取 ROOT_GUID
-    async fetchRootGuid () {
-      let res = await Api.getRootGuid()
-      this.rootGuid = res.data.fileGuid
-      this.fetchQueryDirectory()
+    async fetchRootid() {
+      try {
+        const res = await Api.getRootid()
+        if (!(res && res.data)) return false
+        const { id } = res.data
+        this.parentid = id
+        this.fetchQueryDirectory()
+      } catch (error) {
+        console.log('fetchRootid ----->', error)
+      }
     },
     // 获取 列表数据
-    async fetchQueryDirectory () {
-      let rp = {
-        parentGuid: this.parentGuid ? this.parentGuid : this.rootGuid
-      }
-      let resQuery = await Api.queryDirectoty(rp)
-      if (resQuery) {
-        this.handleQueryData(resQuery)
+    async fetchQueryDirectory() {
+      try {
+        const rp = {
+          parentid: this.parentid
+        }
+        const resQuery = await Api.queryDirectoty(rp)
+        if (resQuery) {
+          this.handleQueryData(resQuery)
+        }
+      } catch (error) {
+        console.log('fetchQueryDirectory ----->', error)
       }
     },
     // 多选框
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       console.log('handleSelectionChange val', val)
       this.multipleSelection = val
     },
     // 点击行
-    handleRowClick (row) {
+    handleRowClick(row) {
       // this.$refs.multipleTable.toggleRowSelection(row)
     },
     // 删除
-    handleDelete (index, row) {
+    handleDelete(index, row) {
       this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let { fileGuid } = row
-        this.fetchRmFile([fileGuid])
+        const { id } = row
+        this.fetchRmFile([id])
       })
     },
     // 批量删除
-    handleDeleteMany () {
-      let delArr = this.multipleSelection
-      if(Array.isArray(delArr) && delArr.length > 0) {
+    handleDeleteMany() {
+      const delArr = this.multipleSelection
+      if (Array.isArray(delArr) && delArr.length > 0) {
         this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let fileGuidArr = []
+          const ids = []
           delArr.forEach(item => {
-            fileGuidArr.push(item.fileGuid)
+            ids.push(item.id)
           })
-          this.fetchRmFile(fileGuidArr)
+          this.fetchRmFile(ids)
         })
       } else {
         this.$message({
@@ -152,29 +160,33 @@ export default {
       }
     },
     // request 删除
-    async fetchRmFile (fileGuidArr) {
-      let rp = {
-        fileGuidArr
-      }
-      let res = await Api.rmFile(rp)
-      let { response } = res
-      if (!response.error_code) {
-        this.$message({
-          message: '删除成功',
-          center: true,
-          duration: 2 * 1000
-        })
-        this.fetchQueryDirectory()
-      } else {
-        this.$message({
-          message: response.hint_message,
-          center: true,
-          duration: 2 * 1000
-        })
+    async fetchRmFile(ids) {
+      try {
+        const rp = {
+          ids
+        }
+        const res = await Api.rmFile(rp)
+        const { response } = res
+        if (!response.error_code) {
+          this.$message({
+            message: '删除成功',
+            center: true,
+            duration: 2 * 1000
+          })
+          this.fetchQueryDirectory()
+        } else {
+          this.$message({
+            message: response.hint_message,
+            center: true,
+            duration: 2 * 1000
+          })
+        }
+      } catch (error) {
+        console.log('fetchRmFile', error)
       }
     },
     // 重命名
-    handleRename (index, row) {
+    handleRename(index, row) {
       this.$prompt('请输入文件名称', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
@@ -185,8 +197,8 @@ export default {
             message: '文件名不能为空'
           })
         } else {
-          let rp = {
-            fileGuid: row.fileGuid,
+          const rp = {
+            id: row.id,
             fileName: value
           }
           this.fetchRename(rp)
@@ -194,20 +206,24 @@ export default {
       })
     },
     // request 重命名
-    async fetchRename (rp) {
-      let res = await Api.rename(rp)
-      let { response } = res
-      if (!response.error_code) {
-        this.$message({
-          type: 'success',
-          message: '更新成功'
-        })
-        this.fetchQueryDirectory()
+    async fetchRename(rp) {
+      try {
+        const res = await Api.rename(rp)
+        const { response } = res
+        if (!response.error_code) {
+          this.$message({
+            type: 'success',
+            message: '更新成功'
+          })
+          this.fetchQueryDirectory()
+        }
+      } catch (error) {
+        console.log('fetchRename', error)
       }
     },
     // 查询脑图
-    handleQueryData (res) {
-      let { response, data } = res
+    handleQueryData(res) {
+      const { response, data } = res
       if (!response.error_code) {
         data.forEach(item => {
           item.createTime = this.dateParse(new Date(item.createTime).getTime())
@@ -223,24 +239,28 @@ export default {
       }
     },
     // 新增文件
-    async handleAddFile () {
-      let rp = {
-        parentGuid: this.parentGuid ? this.parentGuid : this.rootGuid
-      }
-      let res = await Api.addFile(rp)
-      let { response, data } = res
-      if (!response.error_code) {
-        this.$router.push({'name': 'NaotuEditor', 'params': { id: data.fileGuid }})
-      } else {
-        this.$message({
-          message: response.hint_message,
-          center: true,
-          duration: 2 * 1000
-        })
+    async handleAddFile() {
+      try {
+        const rp = {
+          parentid: this.parentid
+        }
+        const res = await Api.addFile(rp)
+        const { response, data: { id } } = res
+        if (!response.error_code) {
+          this.$router.push({ 'name': 'NaotuEditor', 'params': { id }})
+        } else {
+          this.$message({
+            message: response.hint_message,
+            center: true,
+            duration: 2 * 1000
+          })
+        }
+      } catch (error) {
+        console.log('handleAddFile ----->', error)
       }
     },
     // 新建文件夹
-    handleAddDirectory () {
+    handleAddDirectory() {
       this.$prompt('请输入文件名称', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
@@ -256,28 +276,32 @@ export default {
       })
     },
     // request 新建文件夹
-    async handleFetchAddDirectory (fileName) {
-      let rp = {
-        parentGuid: this.parentGuid ? this.parentGuid : this.rootGuid,
-        fileName
-      }
-      let res = await Api.addDirectory(rp)
-      let { response } = res
-      if (!response.error_code) {
-        this.$message({
-          type: 'success',
-          message: '新建成功'
-        })
-        this.fetchQueryDirectory()
+    async handleFetchAddDirectory(fileName) {
+      try {
+        const rp = {
+          parentid: this.parentid,
+          fileName
+        }
+        const res = await Api.addDirectory(rp)
+        const { response } = res
+        if (!response.error_code) {
+          this.$message({
+            type: 'success',
+            message: '新建成功'
+          })
+          this.fetchQueryDirectory()
+        }
+      } catch (error) {
+        console.log('handleFetchAddDirectory', error)
       }
     },
     // 返回上一级
-    handleBack () {
+    handleBack() {
       this.$router.go(-1)
     },
     // 格式化事件
-    dateParse (timestamp, format = '{y}-{m}-{d} {h}:{i}') {
-      if(!timestamp) return ''
+    dateParse(timestamp, format = '{y}-{m}-{d} {h}:{i}') {
+      if (!timestamp) return ''
       return parseTime(timestamp, format)
     }
   }
