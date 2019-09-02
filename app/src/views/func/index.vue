@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import Api from '@/api/system'
+import Api from '@/api/func.api'
 import { parseTime } from '@/utils/index.js'
 export default {
   name: 'Func',
@@ -78,15 +78,24 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       form: {
+        id: '',
         name: '',
         status: true,
       },
       formLabelWidth: '120px',
       rules: {
-          name: [
-            { required: true, message: '请输入名称', trigger: 'blur' }
-          ],
-        }
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+      },
+      /**
+       * 用户判断点击保存的动作
+       * {
+       *    0: save,
+       *    1: edit
+       * }
+       */
+      confirmType: 0, 
     }
   },
   methods: {
@@ -97,6 +106,7 @@ export default {
     // 新增
     handleAdd() {
       this.dialogFormVisible = true
+      this.confirmType = 0
       this.$nextTick(() => {
         this.$refs.form.resetFields()
       })
@@ -133,6 +143,7 @@ export default {
     handleEdit(index, row) {
       const { id } = row
       if(!id) return false
+      this.confirmType = 1
       this.fetchFormData(id)
     },
     // 获取表单数据
@@ -144,6 +155,7 @@ export default {
         const doc = await Api.funcFind(rp)
         const {response: {error_code, hint_message}, data} = doc
         if(!error_code) {
+          this.form.id = data[0].id
           this.form.name = data[0].name
           this.form.status = data[0].status
           this.$nextTick(() => {
@@ -191,7 +203,18 @@ export default {
     handleConfirm() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.fetchSave()
+          /**
+           * 用户判断点击保存的动作
+           * {
+           *    0: save,
+           *    1: edit
+           * }
+           */
+          if(this.confirmType) {
+            this.fetchUpdate()
+          } else {
+            this.fetchSave()
+          }
         } else {
           return false;
         }
@@ -211,6 +234,22 @@ export default {
         }
       } catch (error) {
         console.log('fetchSave', error)
+      }
+    },
+    // 更新表单
+    async fetchUpdate() {
+      try {
+        const doc = await Api.funcUpdate(this.form)
+        const { response } = doc
+        if(!response.error_code) {
+          this.message('更新成功')
+          this.dialogFormVisible = false
+          this.fetchTableData()
+        } else {
+          this.message(response.hint_message)
+        }
+      } catch (error) {
+        console.log('fetchUpdate', error)
       }
     },
     message(message) {
