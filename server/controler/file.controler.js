@@ -1,7 +1,10 @@
 const FileDao = require('../dao/file.dao.js');
-const base = require('../util/base.js');
+const BaseUtil = require('../util/base.js');
 const fileDao = new FileDao();
 const BaseResJson = require('../util/baseResJson.js');
+
+// 实例化
+let baseUtil = new BaseUtil();
 let resJson = new BaseResJson();
 
 // 获取 root guid
@@ -78,7 +81,7 @@ const reName = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const rp = req.body
-    if(!(base.isObject(rp) && Object.keys(rp).length > 0)) resJson.emit({res, error_code: 10001})
+    if(!(baseUtil.isObject(rp) && Object.keys(rp).length > 0)) resJson.emit({res, error_code: 10001})
     const { id } = rp
     const modifyDoc = {...rp}
     await fileDao.updateOne({ id }, modifyDoc)
