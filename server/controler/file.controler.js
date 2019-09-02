@@ -1,6 +1,8 @@
 const FileDao = require('../dao/file.dao.js');
 const base = require('../util/base.js');
 const fileDao = new FileDao();
+const BaseResJson = require('../util/baseResJson.js');
+let resJson = new BaseResJson();
 
 // 获取 root guid
 const getRootId = async (req, res, next) => {
@@ -16,10 +18,10 @@ const getRootId = async (req, res, next) => {
       }
       data = await fileDao.create(rp)
     }
-    responseJson({res, data})
+    resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -32,10 +34,10 @@ const addFile = async (req, res, next) => {
       parentid,
       userid
     })
-    responseJson({res, data})
+    resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -52,10 +54,10 @@ const addDirectory = async (req, res, next) => {
       extName: ''
     }
     await fileDao.create(rp)
-    responseJson({res})
+    resJson.emit({res})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -63,12 +65,12 @@ const addDirectory = async (req, res, next) => {
 const reName = async (req, res, next) => {
   try {
     const { id, fileName } = req.body
-    if(!(id && fileName)) responseJson({res, error_code: 10001})
+    if(!(id && fileName)) resJson.emit({res, error_code: 10001})
     await fileDao.updateOne({ id }, { fileName })
-    responseJson({res})
+    resJson.emit({res})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -76,14 +78,14 @@ const reName = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const rp = req.body
-    if(!(base.isObject(rp) && Object.keys(rp).length > 0)) responseJson({res, error_code: 10001})
+    if(!(base.isObject(rp) && Object.keys(rp).length > 0)) resJson.emit({res, error_code: 10001})
     const { id } = rp
     const modifyDoc = {...rp}
     await fileDao.updateOne({ id }, modifyDoc)
-    responseJson({res})
+    resJson.emit({res})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -91,7 +93,7 @@ const update = async (req, res, next) => {
 const rm = async (req, res, next) => {
   try {
     const { ids } = req.body
-    if(!(Array.isArray(ids) && ids.length > 0)) responseJson({res, error_code: 10001})
+    if(!(Array.isArray(ids) && ids.length > 0)) resJson.emit({res, error_code: 10001})
     const _ids = await findChildrenIds(ids)
 
     if(Array.isArray(_ids) && _ids.length > 0) {
@@ -108,13 +110,13 @@ const rm = async (req, res, next) => {
           }
         }
       )
-      responseJson({res})
+      resJson.emit({res})
     } else {
-      responseJson({res, error_code: 2000})
+      resJson.emit({res, error_code: 2000})
     }
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -122,16 +124,16 @@ const rm = async (req, res, next) => {
 let queryFile = async(req, res, next) => {
   try {
     const { id } = req.body;
-    if(!id) responseJson({res, error_code: 10001})
+    if(!id) resJson.emit({res, error_code: 10001})
     const data = await fileDao.find({
       id
     }, { 
       _id: 0 
     })
-    responseJson({res, data})
+    resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -139,7 +141,7 @@ let queryFile = async(req, res, next) => {
 const queryDirectory = async(req, res, next) => {
   try {
     let { parentid } = req.body
-    if(!parentid) responseJson({res, error_code: 10001})
+    if(!parentid) resJson.emit({res, error_code: 10001})
     const rp = {
       parentid,
       isDelete: {
@@ -147,10 +149,10 @@ const queryDirectory = async(req, res, next) => {
       }
     }
     let data = await fileDao.find(rp, { _id: 0 })
-    responseJson({res, data})
+    resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
   
 }
@@ -193,10 +195,10 @@ const querySelfDirectotyForTrash = async (req, res ,next) => {
       }
     }
 
-    responseJson({res, data})
+    resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -204,7 +206,7 @@ const querySelfDirectotyForTrash = async (req, res ,next) => {
 const revertFiles = async (req, res, next) => {
   try {
     const { ids } = req.body
-    if(!(Array.isArray(ids) && ids.length > 0)) responseJson({res, error_code: 10001})
+    if(!(Array.isArray(ids) && ids.length > 0)) resJson.emit({res, error_code: 10001})
     const _ids = await findChildrenIds(ids)
     
     if(Array.isArray(_ids) && _ids.length > 0) {
@@ -221,13 +223,13 @@ const revertFiles = async (req, res, next) => {
           }
         }
       )
-      responseJson({res})
+      resJson.emit({res})
     } else {
-      responseJson({res, error_code: 2000})
+      resJson.emit({res, error_code: 2000})
     }
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -235,7 +237,7 @@ const revertFiles = async (req, res, next) => {
 const deleteFiles = async (req, res, next) => {
   try {
     const { ids } = req.body
-    if(!(Array.isArray(ids) && ids.length > 0)) responseJson({res, error_code: 10001})
+    if(!(Array.isArray(ids) && ids.length > 0)) resJson.emit({res, error_code: 10001})
     const _ids = await findChildrenIds(ids)
     
     if(Array.isArray(_ids) && _ids.length > 0) {
@@ -247,13 +249,13 @@ const deleteFiles = async (req, res, next) => {
           }
         }
       )
-      responseJson({res})
+      resJson.emit({res})
     } else {
-      responseJson({res, error_code: 2000})
+      resJson.emit({res, error_code: 2000})
     }
   } catch (error) {
     console.log(error)
-    responseJson({res, error_code: 2000})
+    resJson.emit({res, error_code: 2000})
   }
 }
 
@@ -292,38 +294,6 @@ const findChildrenIds = async (ids) => {
     }
   }
   return newids
-}
-
-/**
- * @param {*} res 
- * @param {*} error_code 
- * @param {*} error_message 
- * @param {*} hint_message 
- * @param {*} data 
- */
-const responseJson = ({res, error_code = 0, error_message = '', hint_message, data}) => {
-  switch(error_code){
-    case 0:
-      hint_message = ''
-      break;
-    case 10001:
-      hint_message = '参数错误'
-      break;
-    case 20000:
-      hint_message = '系统错误'
-      break;
-  }
-
-  let resp = {
-    response: {
-      error_code,
-      error_message,
-      hint_message,
-    }
-  } 
-  if(data) resp.data = data
-
-  res.json(resp)
 }
 
 module.exports = {

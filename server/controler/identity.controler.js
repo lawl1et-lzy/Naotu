@@ -1,5 +1,5 @@
-const FuncDao = require('../dao/func.dao.js');
-const funcDao = new FuncDao();
+const IdentityDao = require('../dao/identity.dao.js');
+const identityDao = new IdentityDao();
 const BaseResJson = require('../util/baseResJson.js');
 let resJson = new BaseResJson();
 
@@ -7,7 +7,7 @@ const create = async (req, res) => {
   try {
     const { name, status } = req.body
     if(!(name && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
-    const data = await funcDao.create({
+    const data = await identityDao.create({
       name,
       status
     })
@@ -26,7 +26,7 @@ const find = async (req, res) => {
   try {
     const { id } = req.body
     const query = id ? { id } : {}
-    const data = await funcDao.find(query, {
+    const data = await identityDao.find(query, {
       _id: 0
     })
     if(data) {
@@ -49,7 +49,7 @@ const update = async (req, res) => {
     }
     if(name) project.name = name
 
-    const data = await funcDao.updateOne({
+    const data = await identityDao.updateOne({
       id
     },{
       $set: project
@@ -71,7 +71,7 @@ const remove = async (req, res) => {
     const { ids } = req.body
     console.log(ids instanceof Array)
     if(!Array.isArray(ids) || ids.length === 0) resJson.emit({res, error_code: 10001})
-    const data = await funcDao.remove({
+    const data = await identityDao.remove({
       id: {
         $in: ids
       }
