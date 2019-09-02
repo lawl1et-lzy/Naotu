@@ -1,7 +1,6 @@
 const MD5 = require('md5.js')
 const UserDao = require('../dao/user.dao.js')
 const userDao = new UserDao();
-const Mongoose = require('mongoose');
 // 登录
 const login = async (req, res, next) => {
   try {
