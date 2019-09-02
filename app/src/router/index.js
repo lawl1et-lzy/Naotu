@@ -5,6 +5,8 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+const Func = () => import('@/views/func')
+const Identity = () => import('@/views/identity')
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -72,6 +74,25 @@ export const constantRoutes = [
       name: 'Trash',
       component: () => import('@/views/trash/index'),
       meta: { title: '回收站', icon: 'trash' }
+    }]
+  },
+
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/',
+    name: 'system',
+    meta: { title: '系统配置', icon: 'example' },
+    children: [{
+      path: '/func',
+      name: 'Func',
+      component: Func,
+      meta: { title: '功能项', icon: 'trash' }
+    },{
+      path: '/identity',
+      name: 'Identity',
+      component: Identity,
+      meta: { title: '用户身份', icon: 'trash' }
     }]
   },
 
