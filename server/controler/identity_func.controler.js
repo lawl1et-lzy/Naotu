@@ -2,11 +2,12 @@ const IdentityFunDao = require('../dao/identity_func.dao.js');
 const IdentityDao = require('../dao/identity.dao.js');
 const FuncDao = require('../dao/func.dao.js');
 const BaseResJson = require('../util/baseResJson.js');
-const Mongoose = require('mongoose');
+const BaseUtil = require('../util/base.js');
 
 const identityFunDao = new IdentityFunDao();
 const identityDao = new IdentityDao();
 const funcDao = new FuncDao();
+const baseUitl = new BaseUtil();
 let resJson = new BaseResJson();
 
 
@@ -14,17 +15,23 @@ const create = async (req, res) => {
   try {
     const { identityid, funcsids, status } = req.body
     if(!(identityid && Array.isArray(funcsids) && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
+    
     let newFuncsids = []
-    let newIdentityid = await formatToObjectId(identityid)
+    let newIdentityid = await baseUitl.formatToObjectId(identityid)
     for (let _id of funcsids) {
-      let formatId = await formatToObjectId(_id)
+      let formatId = await baseUitl.formatToObjectId(_id)
       newFuncsids.push(formatId)
     }
+
     const identity = await identityDao.findOne({ _id: newIdentityid })
     const funcs = await funcDao.find({ _id: {
       $in: newFuncsids
     } })
-    if(!(identity || funcs)) resJson.emit({res, error_code: 20000})
+    if(!(identity && funcs)) {
+      resJson.emit({res, error_code: 10001})
+      return false
+    }
+    
     const data = await identityFunDao.create({
       identity,
       funcs,
@@ -33,7 +40,7 @@ const create = async (req, res) => {
     if(data) {
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 10002, hint_message: '保存失败'})
+      resJson.emit({res, error_code: 10002})
     }
   } catch (error) {
     console.log(error)
@@ -75,18 +82,26 @@ const update = async (req, res) => {
   try {
     const { _id, identityid, funcsids, status } = req.body
     if(!(_id && identityid && Array.isArray(funcsids) && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
-    let newid = await formatToObjectId(_id)
+    let newid = await baseUitl.formatToObjectId(_id)
     let newFuncsids = []
-    let newIdentityid = await formatToObjectId(identityid)
+    let newIdentityid = await baseUitl.formatToObjectId(identityid)
     for (let _id of funcsids) {
-      let formatId = await formatToObjectId(_id)
+      let formatId = await baseUitl.formatToObjectId(_id)
       newFuncsids.push(formatId)
+    }
+    const identity = await identityDao.findOne({ _id: newIdentityid })
+    const funcs = await funcDao.find({ _id: {
+      $in: newFuncsids
+    } })
+    if(!(identity && funcs)) {
+      resJson.emit({res, error_code: 10001})
+      return false
     }
     const data = await identityFunDao.findByIdAndUpdate(newid, {
       $set: {
         status,
-        identity: newIdentityid,
-        funcs: newFuncsids
+        identity,
+        funcs
       }
     })
     
@@ -107,7 +122,7 @@ const remove = async (req, res) => {
     if(!Array.isArray(_ids) || _ids.length === 0) resJson.emit({res, error_code: 10001})
     let newIds = []
     for (let _id of _ids) {
-      let formatId = await formatToObjectId(_id)
+      let formatId = await baseUitl.formatToObjectId(_id)
       newIds.push(formatId)
     }
     const data = await identityFunDao.remove({
@@ -124,11 +139,6 @@ const remove = async (req, res) => {
     console.log(error)
     resJson.emit({res, error_code: 20000})
   }
-}
-
-// 转化成 ObjectId
-const formatToObjectId = async (id) => {
-  return await Mongoose.Types.ObjectId(id)
 }
 
 module.exports = {

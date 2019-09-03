@@ -37,7 +37,7 @@ class BaseDao {
 
   async findByIdAndUpdate (_id, update, options) {
     try {
-      return await this.model.findById(_id, update, options)
+      return await this.model.findByIdAndUpdate(_id, update, options)
     } catch (error) {
       console.log('BaseDao findByIdAndUpdate ------>', error)
       return error
@@ -50,16 +50,6 @@ class BaseDao {
       return doc
     } catch (error) {
       console.log('BaseDao findOne ------>', error)
-      return error
-    }
-  }
-
-  async findByIdAndUpdate (_id, projection) {
-    try {
-      const doc = await this.model.findByIdAndUpdate(_id, projection)
-      return doc
-    } catch (error) {
-      console.log('BaseDao findByIdAndUpdate ------>', error)
       return error
     }
   }

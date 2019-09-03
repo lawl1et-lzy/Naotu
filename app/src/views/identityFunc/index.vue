@@ -50,6 +50,9 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="createTime"
+        label="创建时间" />
+      <el-table-column
         prop="updateTime"
         label="修改时间" />
       <el-table-column
