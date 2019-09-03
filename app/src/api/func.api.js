@@ -1,11 +1,17 @@
 import axios from '@/utils/Api/Api.js'
 
 class Api {
-  static funcFind (data) {
+  static funcFindById (data) {
+    return axios({
+      method: 'POST',
+      url: `/naotu/func_findById`,
+      data
+    })
+  }
+  static funcFind () {
     return axios({
       method: 'POST',
       url: `/naotu/func_find`,
-      data
     })
   }
   static funcCreate (data) {

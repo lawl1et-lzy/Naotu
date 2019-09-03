@@ -56,7 +56,7 @@
 import { validUsername } from '@/utils/validate'
 import { setToken } from '@/utils/auth'
 import { mapMutations } from 'vuex'
-import Api from '@/api/user'
+import Api from '@/api/user.api'
 
 export default {
   name: 'Login',

@@ -32,7 +32,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import Api from '@/api/user'
+import Api from '@/api/user.api'
 import { getToken } from '@/utils/auth'
 
 export default {

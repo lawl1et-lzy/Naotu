@@ -7,6 +7,7 @@ Vue.use(Router)
 import Layout from '@/layout'
 const Func = () => import('@/views/func')
 const Identity = () => import('@/views/identity')
+const IdentityFunc = () => import('@/views/identityFunc')
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -87,12 +88,17 @@ export const constantRoutes = [
       path: '/func',
       name: 'Func',
       component: Func,
-      meta: { title: '功能项', icon: 'trash' }
+      meta: { title: '功能配置', icon: 'trash' }
     },{
       path: '/identity',
       name: 'Identity',
       component: Identity,
-      meta: { title: '用户身份', icon: 'trash' }
+      meta: { title: '角色配置', icon: 'trash' }
+    },{
+      path: '/identityFunc',
+      name: 'IdentityFunc',
+      component: IdentityFunc,
+      meta: { title: '权限配置', icon: 'trash' }
     }]
   },
 

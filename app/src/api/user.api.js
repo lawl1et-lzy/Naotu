@@ -22,6 +22,13 @@ class Api {
       url: `/naotu/get_user_info`
     })
   }
+
+  static getUserInfos() {
+    return axios({
+      method: 'POST',
+      url: `/naotu/get_user_infos`
+    })
+  }
 }
 
 export default Api

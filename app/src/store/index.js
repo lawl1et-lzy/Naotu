@@ -4,6 +4,8 @@ import getters from './getters'
 import app from './modules/app'
 import settings from './modules/settings'
 import user from './modules/user'
+import func from './modules/func'
+import identity from './modules/identity'
 
 Vue.use(Vuex)
 
@@ -11,7 +13,9 @@ const store = new Vuex.Store({
   modules: {
     app,
     settings,
-    user
+    user,
+    func,
+    identity
   },
   getters
 })

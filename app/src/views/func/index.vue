@@ -152,7 +152,7 @@ export default {
         const rp = {
           id
         }
-        const doc = await Api.funcFind(rp)
+        const doc = await Api.funcFindById(rp)
         const {response: {error_code, hint_message}, data} = doc
         if(!error_code) {
           this.form.id = data[0].id

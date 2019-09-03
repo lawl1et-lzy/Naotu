@@ -1,10 +1,16 @@
 import axios from '@/utils/Api/Api.js'
 
 class Api {
-  static identityFind (data) {
+  static identityFind () {
     return axios({
       method: 'POST',
       url: `/naotu/identity_find`,
+    })
+  }
+  static identityFindById (data) {
+    return axios({
+      method: 'POST',
+      url: `/naotu/identity_findById`,
       data
     })
   }
