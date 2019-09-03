@@ -2,10 +2,6 @@ const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema
 
 const func = {
-  id: {
-    type: String,
-    default: Mongoose.Types.ObjectId
-  },
   name: {
     type: String,
     trim: true,
