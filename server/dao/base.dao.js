@@ -6,9 +6,6 @@ class BaseDao {
     this.model = model
   }
 
-  /**
-   * @param {Object} params 
-   */
   async create (params) {
     try {
       const doc = await this.model.create(params)
@@ -19,10 +16,6 @@ class BaseDao {
     }
   }
 
-  /**
-   * @param {Object} query 
-   * @param {Object} projection 
-   */
   async find (query, projection) {
     try {
       const doc = await this.model.find(query, projection)
@@ -33,23 +26,24 @@ class BaseDao {
     }
   }
 
-  /**
-   * @param {Object} query 
-   * @param {Object} projection 
-   */
-  async findById (_id, projection) {
+  async findById (_id, projection, options) {
     try {
-      const doc = await this.model.findById(_id, projection)
-      return doc
+      return await this.model.findById(_id, projection, options)
     } catch (error) {
       console.log('BaseDao findById ------>', error)
       return error
     }
   }
 
-  /**
-   * @param {Object} query 
-   */
+  async findByIdAndUpdate (_id, update, options) {
+    try {
+      return await this.model.findById(_id, update, options)
+    } catch (error) {
+      console.log('BaseDao findByIdAndUpdate ------>', error)
+      return error
+    }
+  }
+
   async findOne (query, projection) {
     try {
       const doc = await this.model.findOne(query, projection)
@@ -60,9 +54,6 @@ class BaseDao {
     }
   }
 
-  /**
-   * @param {Object} query 
-   */
   async findByIdAndUpdate (_id, projection) {
     try {
       const doc = await this.model.findByIdAndUpdate(_id, projection)
@@ -81,10 +72,6 @@ class BaseDao {
     return await this.model.findById(_id, findOpts).populate(populateOpts)
   }
 
-  /**
-   * @param {Object} query 
-   * @param {Object} updateDoc 
-   */
   async update (query, updateDoc, options ) {
     try {
       const doc = await this.model.update(query, updateDoc, options)
@@ -95,10 +82,6 @@ class BaseDao {
     }
   }
 
-  /**
-   * @param {Object} query 
-   * @param {Object} updateDoc 
-   */
   async updateOne (query, updateDoc ) {
     try {
       const doc = await this.model.update(query, updateDoc, {upsert: false, multi: false})
@@ -109,10 +92,6 @@ class BaseDao {
     }
   }
 
-  /**
-   * @param {Object} query 
-   * @param {Object} params 
-   */
   async updateMany (query, updateDoc) {
     try {
       const doc = await this.model.update(query, updateDoc, {upsert: false, multi: true})
@@ -123,9 +102,6 @@ class BaseDao {
     }
   }
 
-  /**
-   * @param {Object} query 
-   */
   async remove (query) {
     try {
       const doc = await this.model.remove(query)
@@ -136,10 +112,6 @@ class BaseDao {
     }
   }
 
-  /**
-   * 
-   * @param {Array} params 
-   */
   async aggregate (params) {
     try {
       const doc = await this.model.aggregate(params)

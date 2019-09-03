@@ -20,6 +20,12 @@ class BaseResJson {
       case 10001:
         hint_message = '参数错误'
         break;
+      case 10002:
+        hint_message = '保存失败'
+        break;
+      case 10001:
+        hint_message = '删除失败'
+        break;
       case 20000:
         hint_message = '系统错误'
         break;

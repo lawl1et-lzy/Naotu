@@ -1,6 +1,4 @@
 import Api from '@/api/user.api'
-// import { getToken } from '@/utils/auth'
-// import { resetRouter } from '@/router'
 
 const state = {
   userInfo: '', // 当前个人信息
@@ -9,31 +7,33 @@ const state = {
 
 const mutations = {
   SET_USER_INFO: (state, payload) => {
-    state.userInfo = payload.data
+    state.userInfo = payload
   },
   SET_USER_INFOS: (state, payload) => {
-    state.userInfos = payload.data
+    state.userInfos = payload
   }
 }
 
 const actions = {
-  // get user info
+  // 获取当前用户信息
   async getUserInfo({ commit }) {
     try {
       const doc = await Api.getUserInfo()
-      if(doc) {
-        commit('SET_USER_INFO', doc)
+      const { response: { error_code }, data } = doc
+      if(!error_code) {
+        commit('SET_USER_INFO', data)
       }
     } catch (error) {
       console.log('getUserInfo', error)
     }
   },
-  // get user info
+  // 获取全部用户信息
   async getUserInfos({ commit }) {
     try {
       const doc = await Api.getUserInfos()
-      if(doc) {
-        commit('SET_USER_INFOS', doc)
+      const { response: { error_code }, data } = doc
+      if(!error_code) {
+        commit('SET_USER_INFOS', data)
       }
     } catch (error) {
       console.log('getUserInfos', error)
