@@ -10,7 +10,7 @@ export default {
   name: 'NaotuEditor',
   data() {
     return {
-      id: '', // 链接参数
+      _id: '', // 链接参数
       fileData: '', // 当前文件数据
       naotuCache: '',
       iframeSec: '',
@@ -19,7 +19,7 @@ export default {
   },
   created() {
     const routeParams = this.$route.params
-    this.id = routeParams.id
+    this._id = routeParams._id
     this.fetchQueryFile()
   },
   beforeRouteUpdate(to, from, next) {
@@ -52,7 +52,7 @@ export default {
       const fileName = this.naotuCache.root.data.text
       const content = JSON.stringify(this.editor.minder.exportJson())
       const rp = {
-        id: String(this.id),
+        _id: this._id,
         content,
         fileName
       }
@@ -72,11 +72,11 @@ export default {
         })
       }
     },
-    // 获取 列表数据
+    // 获取数据
     async fetchQueryFile() {
       try {
         const rp = {
-          id: this.id
+          _id: this._id
         }
         const res = await Api.queryFile(rp)
         if (res) {
@@ -90,8 +90,8 @@ export default {
     handleQueryData(res) {
       const { response, data } = res
       if (!response.error_code) {
-        this.fileData = data[0]
-        this.naotuCache = data[0].content ? JSON.parse(data[0].content) : ''
+        this.fileData = data
+        this.naotuCache = data.content ? JSON.parse(data.content) : ''
       } else {
         this.$message({
           message: response.hint_message,

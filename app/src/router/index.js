@@ -50,7 +50,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/home',
     children: [{
-      path: 'home/:id?',
+      path: 'home/:_id?',
       name: 'Home',
       component: () => import('@/views/home/index'),
       meta: { title: '我的文件', icon: 'dashboard' }

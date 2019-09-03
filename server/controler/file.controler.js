@@ -1,19 +1,20 @@
 const FileDao = require('../dao/file.dao.js');
 const BaseUtil = require('../util/base.js');
-const fileDao = new FileDao();
 const BaseResJson = require('../util/baseResJson.js');
+const mongoose =require('mongoose')
 
-// 实例化
 let baseUtil = new BaseUtil();
 let resJson = new BaseResJson();
+const fileDao = new FileDao();
+
 
 // 获取 root guid
 const getRootId = async (req, res, next) => {
   try {
-    let data = await fileDao.findOne({ fileType: 'root' }, {_id: 0})
+    let data = await fileDao.findOne({ fileType: 'root' })
     if(!data) {
       const rp = {
-        parentid: '0',
+        parentid: mongoose.Types.ObjectId(),
         fileName: '',
         fileType: 'root',
         extName: '',
@@ -33,11 +34,16 @@ const addFile = async (req, res, next) => {
   try {
     const { userid } = JSON.parse(req.cookies.user)
     const { parentid } = req.body
+    if(!parentid) resJson.emit({res, error_code: 10001})
     const data = await fileDao.create({
       parentid,
       userid
     })
-    resJson.emit({res, data})
+    if(data) {
+      resJson.emit({res, data})
+    } else {
+      resJson.emit({res, error_code: 10002})
+    }
   } catch (error) {
     console.log(error)
     resJson.emit({res, error_code: 20000})
@@ -56,8 +62,12 @@ const addDirectory = async (req, res, next) => {
       fileType: 'directory',
       extName: ''
     }
-    await fileDao.create(rp)
-    resJson.emit({res})
+    const data = await fileDao.create(rp)
+    if(data) {
+      resJson.emit({res})
+    } else {
+      resJson.emit({res, error_code: 10002})
+    }
   } catch (error) {
     console.log(error)
     resJson.emit({res, error_code: 20000})
@@ -67,10 +77,14 @@ const addDirectory = async (req, res, next) => {
 // 重命名
 const reName = async (req, res, next) => {
   try {
-    const { id, fileName } = req.body
-    if(!(id && fileName)) resJson.emit({res, error_code: 10001})
-    await fileDao.updateOne({ id }, { fileName })
-    resJson.emit({res})
+    const { _id, fileName } = req.body
+    if(!(_id && fileName)) resJson.emit({res, error_code: 10001})
+    const data = await fileDao.findByIdAndUpdate(_id, { fileName })
+    if(data) {
+      resJson.emit({res})
+    } else {
+      resJson.emit({res, error_code: 10002})
+    }
   } catch (error) {
     console.log(error)
     resJson.emit({res, error_code: 20000})
@@ -82,10 +96,14 @@ const update = async (req, res, next) => {
   try {
     const rp = req.body
     if(!(baseUtil.isObject(rp) && Object.keys(rp).length > 0)) resJson.emit({res, error_code: 10001})
-    const { id } = rp
+    const { _id } = rp
     const modifyDoc = {...rp}
-    await fileDao.updateOne({ id }, modifyDoc)
-    resJson.emit({res})
+    const data = await fileDao.findByIdAndUpdate(_id, modifyDoc)
+    if(data) {
+      resJson.emit({res})
+    } else {
+      resJson.emit({res, error_code: 10002})
+    }
   } catch (error) {
     console.log(error)
     resJson.emit({res, error_code: 20000})
@@ -95,16 +113,16 @@ const update = async (req, res, next) => {
 // 批量丢入回收站
 const rm = async (req, res, next) => {
   try {
-    const { ids } = req.body
-    if(!(Array.isArray(ids) && ids.length > 0)) resJson.emit({res, error_code: 10001})
-    const _ids = await findChildrenIds(ids)
+    const { _ids } = req.body
+    if(!(Array.isArray(_ids) && _ids.length > 0)) resJson.emit({res, error_code: 10001})
+    const _fids = await findChildrenIds(_ids)
 
-    if(Array.isArray(_ids) && _ids.length > 0) {
+    if(Array.isArray(_fids) && _fids.length > 0) {
       // 更新数据
-      await fileDao.updateMany(
+      const data = await fileDao.updateMany(
         {
-          id: {
-            $in: _ids
+          _id: {
+            $in: _fids
           }
         },
         {
@@ -113,7 +131,11 @@ const rm = async (req, res, next) => {
           }
         }
       )
-      resJson.emit({res})
+      if(data) {
+        resJson.emit({res})
+      } else {
+        resJson.emit({res, error_code: 10002})
+      }
     } else {
       resJson.emit({res, error_code: 20000})
     }
@@ -124,16 +146,16 @@ const rm = async (req, res, next) => {
 }
 
 // 查询文件
-let queryFile = async(req, res, next) => {
+const queryFile = async(req, res, next) => {
   try {
-    const { id } = req.body;
-    if(!id) resJson.emit({res, error_code: 10001})
-    const data = await fileDao.find({
-      id
-    }, { 
-      _id: 0 
-    })
-    resJson.emit({res, data})
+    const { _id } = req.body;
+    if(!_id) resJson.emit({res, error_code: 10001})
+    const data = await fileDao.findById(_id)
+    if(data) {
+      resJson.emit({res, data})
+    } else {
+      resJson.emit({res, error_code: 20000})
+    }
   } catch (error) {
     console.log(error)
     resJson.emit({res, error_code: 20000})
@@ -151,8 +173,12 @@ const queryDirectory = async(req, res, next) => {
         $eq: false
       }
     }
-    let data = await fileDao.find(rp, { _id: 0 })
-    resJson.emit({res, data})
+    const data = await fileDao.find(rp)
+    if(data) {
+      resJson.emit({res, data})
+    } else {
+      resJson.emit({res, error_code: 20000})
+    }
   } catch (error) {
     console.log(error)
     resJson.emit({res, error_code: 20000})
@@ -173,7 +199,7 @@ const querySelfDirectotyForTrash = async (req, res ,next) => {
           from: "files", 
           startWith: "$parentid", 
           connectFromField: "parentid", 
-          connectToField: "id", 
+          connectToField: "_id", 
           as: "parentFiles",
           maxDepth: 0
         } 
@@ -208,16 +234,16 @@ const querySelfDirectotyForTrash = async (req, res ,next) => {
 // 批量还原
 const revertFiles = async (req, res, next) => {
   try {
-    const { ids } = req.body
-    if(!(Array.isArray(ids) && ids.length > 0)) resJson.emit({res, error_code: 10001})
-    const _ids = await findChildrenIds(ids)
+    const { _ids } = req.body
+    if(!(Array.isArray(_ids) && _ids.length > 0)) resJson.emit({res, error_code: 10001})
+    const _fids = await findChildrenIds(_ids)
     
-    if(Array.isArray(_ids) && _ids.length > 0) {
+    if(Array.isArray(_fids) && _fids.length > 0) {
       // 更新数据
-      await fileDao.updateMany(
+      const data = await fileDao.updateMany(
         {
-          id: {
-            $in: _ids
+          _id: {
+            $in: _fids
           }
         },
         {
@@ -226,7 +252,11 @@ const revertFiles = async (req, res, next) => {
           }
         }
       )
-      resJson.emit({res})
+      if(data) {
+        resJson.emit({res})
+      } else {
+        resJson.emit({res, error_code: 20000})
+      }
     } else {
       resJson.emit({res, error_code: 20000})
     }
@@ -239,20 +269,24 @@ const revertFiles = async (req, res, next) => {
 // 批量永久删除
 const deleteFiles = async (req, res, next) => {
   try {
-    const { ids } = req.body
-    if(!(Array.isArray(ids) && ids.length > 0)) resJson.emit({res, error_code: 10001})
-    const _ids = await findChildrenIds(ids)
+    const { _ids } = req.body
+    if(!(Array.isArray(_ids) && _ids.length > 0)) resJson.emit({res, error_code: 10001})
+    const _fids = await findChildrenIds(_ids)
     
-    if(Array.isArray(_ids) && _ids.length > 0) {
+    if(Array.isArray(_fids) && _ids.length > 0) {
       // 更新数据
-      await fileDao.remove(
+      const data = await fileDao.remove(
         {
-          id: {
-            $in: _ids
+          _id: {
+            $in: _fids
           }
         }
       )
-      resJson.emit({res})
+      if(data) {
+        resJson.emit({res})
+      } else {
+        resJson.emit({res, error_code: 20000})
+      }
     } else {
       resJson.emit({res, error_code: 20000})
     }
@@ -263,23 +297,29 @@ const deleteFiles = async (req, res, next) => {
 }
 
 // 查询所有的子节点（包含自身）的id集合
-const findChildrenIds = async (ids) => {
-  let newids = [];
+const findChildrenIds = async (_ids) => {
+  if(!Array.isArray(_ids) || _ids.length === 0) return false
+  let outids = []; // 返回值
+  let newids = []; // 格式化 成 ObjectId
+  for (let _id of _ids) {
+    let formatId = await baseUtil.formatToObjectId(_id)
+    newids.push(formatId)
+  }
   // 查询所有的(包含自身)的子节点数据
   const files = await fileDao.aggregate([
     { 
       $graphLookup: { 
         from: "files", 
-        startWith: "$id", 
-        connectFromField: "id", 
+        startWith: "$_id", 
+        connectFromField: "_id", 
         connectToField: "parentid", 
         as: "subFiles",
       } 
     },
     {
       $match: {
-        id: {
-          $in: ids
+        _id: {
+          $in: newids
         }
       }
     }
@@ -288,15 +328,15 @@ const findChildrenIds = async (ids) => {
   if(Array.isArray(files) && files.length > 0) {
     // 遍历出所有的id
     for(let file of files) {
-      newids.push(file.id)
+      outids.push(file._id)
       if(file.subFiles.length > 0) {
         for(let subfile of file.subFiles) {
-          newids.push(subfile.id)
+          outids.push(subfile._id)
         }
       }
     }
   }
-  return newids
+  return outids
 }
 
 module.exports = {

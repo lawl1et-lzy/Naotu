@@ -2,10 +2,6 @@ const Mongoose = require('mongoose')
 const Schema = Mongoose.Schema
 
 const file = {
-  id: {
-    type: String,
-    default: Mongoose.Types.ObjectId
-  },
   // 用户ID
   userid: {
     type: String,
@@ -13,7 +9,7 @@ const file = {
   },
   // 父级文件夹ID
   parentid: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required:true
   },
   // 文件名

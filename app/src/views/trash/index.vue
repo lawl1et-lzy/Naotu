@@ -120,8 +120,8 @@ export default {
     },
     // 删除单个
     handleDeleteOne (index, row) {
-      let { id } = row
-      this.fetchDeleteFile([id])
+      let { _id } = row
+      this.fetchDeleteFile([_id])
     },
     // 批量删除
     handleDeleteSelected () {
@@ -132,11 +132,11 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let ids = []
+          let _ids = []
           delArr.forEach(item => {
-            ids.push(item.id)
+            _ids.push(item._id)
           })
-          this.fetchDeleteFile(ids)
+          this.fetchDeleteFile(_ids)
         })
       } else {
         this.$message({
@@ -147,10 +147,10 @@ export default {
       }
     },
     // request 删除
-    async fetchDeleteFile (ids) {
+    async fetchDeleteFile (_ids) {
       try {
         const rp = {
-          ids
+          _ids
         }
         const res = await Api.deleteFiles(rp)
         let { response } = res
@@ -176,11 +176,11 @@ export default {
     async handleRevertSelected () {
       let arr = this.multipleSelection
       if(Array.isArray(arr) && arr.length > 0) {
-        let ids = []
+        let _ids = []
         arr.forEach(item => {
-          ids.push(item.id)
+          _ids.push(item._id)
         })
-        this.fetchRevertFile(ids)
+        this.fetchRevertFile(_ids)
       } else {
         this.$message({
           message: '请选择',
@@ -191,14 +191,14 @@ export default {
     },
     // 单个还原
     handleRevertOne (index, row) {
-      const { id } = row
-      this.fetchRevertFile([id])
+      const { _id } = row
+      this.fetchRevertFile([_id])
     },
     // request 还原
-    async fetchRevertFile (ids) {
+    async fetchRevertFile (_ids) {
       try {
         const rp = {
-          ids
+          _ids
         }
         let res = await Api.revertFiles(rp)
         let { response } = res

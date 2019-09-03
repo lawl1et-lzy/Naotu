@@ -6,66 +6,72 @@ class BaseDao {
     this.model = model
   }
 
-  async create (params) {
+  async create (docs) {
     try {
-      const doc = await this.model.create(params)
-      return doc
+      return await this.model.create(docs)
     } catch (error) {
       console.log('BaseDao create ------>', error)
       return error
     }
   }
 
-  async find (query, projection) {
+  async find (filter, projection) {
     try {
-      const doc = await this.model.find(query, projection)
-      return doc
+      return await this.model.find(filter, projection)
     } catch (error) {
       console.log('BaseDao find ------>', error)
       return error
     }
   }
 
-  async findById (_id, projection, options) {
+  async findById (_id, projection, opts) {
     try {
-      return await this.model.findById(_id, projection, options)
+      return await this.model.findById(_id, projection, opts)
     } catch (error) {
       console.log('BaseDao findById ------>', error)
       return error
     }
   }
 
-  async findByIdAndUpdate (_id, update, options) {
+  async findByIdAndUpdate (_id, update, opts) {
     try {
-      return await this.model.findByIdAndUpdate(_id, update, options)
+      return await this.model.findByIdAndUpdate(_id, update, opts)
     } catch (error) {
       console.log('BaseDao findByIdAndUpdate ------>', error)
       return error
     }
   }
 
-  async findOne (query, projection) {
+  async findOne (query, projection, opts) {
     try {
-      const doc = await this.model.findOne(query, projection)
-      return doc
+      return await this.model.findOne(query, projection, opts)
     } catch (error) {
       console.log('BaseDao findOne ------>', error)
       return error
     }
   }
 
-  async findWithPopulate (query = {}, findOpts = {}, populateOpts) {
-    return await this.model.find(query, findOpts).populate(populateOpts)
-  }
-
-  async findByIdWithPopulate (_id, findOpts = {}, populateOpts) {
-    return await this.model.findById(_id, findOpts).populate(populateOpts)
-  }
-
-  async update (query, updateDoc, options ) {
+  async findWithPopulate ({query = {}, projection = {}, opts = {}, populateOpts}) {
     try {
-      const doc = await this.model.update(query, updateDoc, options)
-      return doc
+      return await this.model.find(query, projection, opts).populate(populateOpts)
+    } catch (error) {
+      console.log('BaseDao findWithPopulate ------>', error)
+      return error
+    }
+  }
+
+  async findByIdWithPopulate ({_id, projection = {}, opts = {}, populateOpts}) {
+    try {
+      return await this.model.findById(_id, projection, opts).populate(populateOpts)
+    } catch (error) {
+      console.log('BaseDao findByIdWithPopulate ------>', error)
+      return error
+    }
+  }
+
+  async update (query, updateDoc, opts ) {
+    try {
+      return await this.model.update(query, updateDoc, opts)
     } catch (error) {
       console.log('BaseDao update ------>', error)
       return error
@@ -74,8 +80,7 @@ class BaseDao {
 
   async updateOne (query, updateDoc ) {
     try {
-      const doc = await this.model.update(query, updateDoc, {upsert: false, multi: false})
-      return doc
+      return await this.model.update(query, updateDoc, {upsert: false, multi: false})
     } catch (error) {
       console.log('BaseDao updateOne ------>', error)
       return error
@@ -84,8 +89,7 @@ class BaseDao {
 
   async updateMany (query, updateDoc) {
     try {
-      const doc = await this.model.update(query, updateDoc, {upsert: false, multi: true})
-      return doc
+      return await this.model.update(query, updateDoc, {upsert: false, multi: true})
     } catch (error) {
       console.log('BaseDao updateMany ------>', error)
       return error
@@ -94,8 +98,7 @@ class BaseDao {
 
   async remove (query) {
     try {
-      const doc = await this.model.remove(query)
-      return doc
+      return await this.model.remove(query)
     } catch (error) {
       console.log('BaseDao remove ------>', error)
       return error
@@ -104,8 +107,7 @@ class BaseDao {
 
   async aggregate (params) {
     try {
-      const doc = await this.model.aggregate(params)
-      return doc
+      return await this.model.aggregate(params)
     } catch (error) {
       console.log('BaseDao aggregate ------>', error)
       return error

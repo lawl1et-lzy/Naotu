@@ -50,7 +50,7 @@ const create = async (req, res) => {
 
 const find = async (req, res) => {
   try {
-    const data = await identityFunDao.findWithPopulate({}, {}, [{path: 'identity'}, {path: 'funcs'}])
+    const data = await identityFunDao.findWithPopulate({populateOpts: [{path: 'identity'}, {path: 'funcs'}]})
     if(data) {
       resJson.emit({res, data})
     } else {
@@ -66,7 +66,7 @@ const findById = async (req, res) => {
   try {
     const { _id } = req.body
     if(!_id) resJson.emit({res, error_code: 10001})
-    const data = await identityFunDao.findByIdWithPopulate(_id, {})
+    const data = await identityFunDao.findByIdWithPopulate({_id})
     if(data) {
       resJson.emit({res, data})
     } else {

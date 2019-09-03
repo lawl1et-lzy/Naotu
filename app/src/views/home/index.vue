@@ -26,12 +26,12 @@
       >
         <template slot-scope="scope">
           <!-- 文件类型 -->
-          <router-link v-if="scope.row.fileType === 'file'" :to="{'name': 'NaotuEditor', 'params': { id: scope.row.id }}">
+          <router-link v-if="scope.row.fileType === 'file'" :to="{'name': 'NaotuEditor', 'params': { _id: scope.row._id }}">
             <i class="el-icon-document" />
             {{ scope.row.fileName }}{{ scope.row.extName }}
           </router-link>
           <!-- 文件夹 -->
-          <router-link v-if="scope.row.fileType === 'directory'" :to="{'name': 'Home', 'params': { id: scope.row.id }}">
+          <router-link v-if="scope.row.fileType === 'directory'" :to="{'name': 'Home', 'params': { _id: scope.row._id }}">
             <i class="el-icon-circle-plus-outline" />
             {{ scope.row.fileName }}{{ scope.row.extName }}
           </router-link>
@@ -76,13 +76,13 @@ export default {
     }
   },
   created() {
-    this.init()
+    this.initData()
   },
   methods: {
     // 初始化必要参数
-    init() {
+    initData() {
       const up = this.$route.params
-      this.parentid = up.id
+      this.parentid = up._id
       if (this.parentid) {
         this.showPreBtn = true
         this.fetchQueryDirectory()
@@ -95,8 +95,8 @@ export default {
       try {
         const res = await Api.getRootid()
         if (!(res && res.data)) return false
-        const { id } = res.data
-        this.parentid = id
+        const { _id } = res.data
+        this.parentid = _id
         this.fetchQueryDirectory()
       } catch (error) {
         console.log('fetchRootid ----->', error)
@@ -132,8 +132,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const { id } = row
-        this.fetchRmFile([id])
+        const { _id } = row
+        this.fetchRmFile([_id])
       })
     },
     // 批量删除
@@ -145,11 +145,11 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          const ids = []
+          let _ids = []
           delArr.forEach(item => {
-            ids.push(item.id)
+            _ids.push(item._id)
           })
-          this.fetchRmFile(ids)
+          this.fetchRmFile(_ids)
         })
       } else {
         this.$message({
@@ -160,10 +160,10 @@ export default {
       }
     },
     // request 删除
-    async fetchRmFile(ids) {
+    async fetchRmFile(_ids) {
       try {
         const rp = {
-          ids
+          _ids
         }
         const res = await Api.rmFile(rp)
         const { response } = res
@@ -198,7 +198,7 @@ export default {
           })
         } else {
           const rp = {
-            id: row.id,
+            _id: row._id,
             fileName: value
           }
           this.fetchRename(rp)
@@ -245,9 +245,9 @@ export default {
           parentid: this.parentid
         }
         const res = await Api.addFile(rp)
-        const { response, data: { id } } = res
+        const { response, data: { _id } } = res
         if (!response.error_code) {
-          this.$router.push({ 'name': 'NaotuEditor', 'params': { id }})
+          this.$router.push({ 'name': 'NaotuEditor', 'params': { _id }})
         } else {
           this.$message({
             message: response.hint_message,
