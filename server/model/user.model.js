@@ -2,10 +2,6 @@ const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema
 
 const user = {
-  id: {
-    type: String,
-    default: Mongoose.Types.ObjectId
-  },
   username: {
     type: String,
     trim: true,

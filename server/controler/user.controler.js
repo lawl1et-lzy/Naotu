@@ -14,14 +14,14 @@ const login = async (req, res, next) => {
     const userDoc = await userDao.findOne({ username })
     if(userDoc) {
       if(md5pwd === userDoc.password) {
-        let { username, id } = userDoc
-        let user = {username, userid: id}
+        let { username, _id } = userDoc
+        let user = {username, userid: _id}
         req.session.user = user
         res.cookie("user", JSON.stringify(user), {
           path: '/',
           maxAge: 7 * 24 * 3600 * 1000
         })
-        resJson.emit({res, data: {username, userid: id}})
+        resJson.emit({res, data: {username, userid: _id}})
       } else {
         resJson.emit({res, error_code: 10003, hint_message: '密码不正确'})
       }
@@ -38,14 +38,13 @@ const login = async (req, res, next) => {
 const getUserInfo = async (req, res) => {
   try {
     const { userid } = JSON.parse(req.cookies.user)
-    const data = await userDao.findOne({
-      id: userid
-    }, { 
-      _id: 0,
-      realname: 1,
-      id: 1,
-      username: 1
-    })
+    const data = await userDao.findById(
+      userid, 
+      { 
+        realname: 1,
+        username: 1
+      }
+    )
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
