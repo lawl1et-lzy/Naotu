@@ -35,6 +35,20 @@ class BaseDao {
 
   /**
    * @param {Object} query 
+   * @param {Object} projection 
+   */
+  async findById (_id, projection) {
+    try {
+      const doc = await this.model.findById(_id, projection)
+      return doc
+    } catch (error) {
+      console.log('BaseDao findById ------>', error)
+      return error
+    }
+  }
+
+  /**
+   * @param {Object} query 
    */
   async findOne (query, projection) {
     try {
@@ -44,6 +58,27 @@ class BaseDao {
       console.log('BaseDao findOne ------>', error)
       return error
     }
+  }
+
+  /**
+   * @param {Object} query 
+   */
+  async findByIdAndUpdate (_id, projection) {
+    try {
+      const doc = await this.model.findByIdAndUpdate(_id, projection)
+      return doc
+    } catch (error) {
+      console.log('BaseDao findByIdAndUpdate ------>', error)
+      return error
+    }
+  }
+
+  async findWithPopulate (query = {}, findOpts = {}, populateOpts) {
+    return await this.model.find(query, findOpts).populate(populateOpts)
+  }
+
+  async findByIdWithPopulate (_id, findOpts = {}, populateOpts) {
+    return await this.model.findById(_id, findOpts).populate(populateOpts)
   }
 
   /**

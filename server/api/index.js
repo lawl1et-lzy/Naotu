@@ -4,11 +4,13 @@ const userApi = require('./user.api.js');
 const fileApi = require('./file.api.js');
 const funcApi = require('./func.api.js');
 const identityApi = require('./identity.api.js');
+const identityFuncApi = require('./identity_func.api.js');
 
 router.use(userApi)
 router.use(fileApi)
 router.use(funcApi)
 router.use(identityApi)
+router.use(identityFuncApi)
 
 module.exports = router
 

@@ -30,7 +30,7 @@ const login = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -49,7 +49,20 @@ const getUserInfo = async (req, res) => {
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
+  }
+}
+
+// 获取所有用户基本信息
+const getUserInfos = async (req, res) => {
+  try {
+    const data = await userDao.find({}, {
+      password: 0,
+    })
+    resJson.emit({res, data})
+  } catch (error) {
+    console.log(error)
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -74,5 +87,6 @@ const loginout = async (req, res, next) => {
 module.exports = {
   login,
   loginout,
-  getUserInfo
+  getUserInfo,
+  getUserInfos
 }

@@ -6,6 +6,8 @@ router.post('/api/naotu/func_create', funcControler.create)
 
 router.post('/api/naotu/func_find', funcControler.find)
 
+router.post('/api/naotu/func_findById', funcControler.findById)
+
 router.post('/api/naotu/func_update', funcControler.update)
 
 router.post('/api/naotu/func_remove', funcControler.remove)

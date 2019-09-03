@@ -5,9 +5,9 @@ const mongo = db.mongo;
 // let url = `mongodb://${mongo.user}:${mongo.pwd}@${mongo.host}:${mongo.port}/${mongo.name}?authSource=admin`
 let url = `mongodb://${mongo.host}:${mongo.port}/${mongo.name}`
 
-module.exports.openDB = function() {
+module.exports.openDB = async function() {
   // 连接数据库
-  mongoose.connect(url, { useNewUrlParser: true })
+ await mongoose.connect(url, { useNewUrlParser: true })
 
   const db = mongoose.connection;
 

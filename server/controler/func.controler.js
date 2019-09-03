@@ -18,25 +18,39 @@ const create = async (req, res) => {
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
 const find = async (req, res) => {
   try {
+    const data = await funcDao.find({})
+    if(data) {
+      resJson.emit({res, data})
+    } else {
+      resJson.emit({res, error_code: 20000})
+    }
+  } catch (error) {
+    console.log(error)
+    resJson.emit({res, error_code: 20000})
+  }
+}
+
+const findById = async (req, res) => {
+  try {
     const { id } = req.body
-    const query = id ? { id } : {}
-    const data = await funcDao.find(query, {
+    if(!id) resJson.emit({res, error_code: 10001})
+    const data = await funcDao.findById({id}, {
       _id: 0
     })
     if(data) {
       resJson.emit({res, data})
     } else {
-      resJson.emit({res, error_code: 2000})
+      resJson.emit({res, error_code: 20000})
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -58,11 +72,11 @@ const update = async (req, res) => {
     if(data) {
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 2000})
+      resJson.emit({res, error_code: 20000})
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -79,11 +93,11 @@ const remove = async (req, res) => {
     if(data) {
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 2000})
+      resJson.emit({res, error_code: 20000})
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -91,5 +105,6 @@ module.exports = {
   create,
   find,
   update,
-  remove
+  remove,
+  findById
 }

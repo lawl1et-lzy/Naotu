@@ -24,7 +24,7 @@ const getRootId = async (req, res, next) => {
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -40,7 +40,7 @@ const addFile = async (req, res, next) => {
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -60,7 +60,7 @@ const addDirectory = async (req, res, next) => {
     resJson.emit({res})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -73,7 +73,7 @@ const reName = async (req, res, next) => {
     resJson.emit({res})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -88,7 +88,7 @@ const update = async (req, res, next) => {
     resJson.emit({res})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -115,11 +115,11 @@ const rm = async (req, res, next) => {
       )
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 2000})
+      resJson.emit({res, error_code: 20000})
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -136,7 +136,7 @@ let queryFile = async(req, res, next) => {
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -155,7 +155,7 @@ const queryDirectory = async(req, res, next) => {
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
   
 }
@@ -201,7 +201,7 @@ const querySelfDirectotyForTrash = async (req, res ,next) => {
     resJson.emit({res, data})
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -228,11 +228,11 @@ const revertFiles = async (req, res, next) => {
       )
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 2000})
+      resJson.emit({res, error_code: 20000})
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 
@@ -254,11 +254,11 @@ const deleteFiles = async (req, res, next) => {
       )
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 2000})
+      resJson.emit({res, error_code: 20000})
     }
   } catch (error) {
     console.log(error)
-    resJson.emit({res, error_code: 2000})
+    resJson.emit({res, error_code: 20000})
   }
 }
 

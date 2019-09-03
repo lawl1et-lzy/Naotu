@@ -8,4 +8,6 @@ router.post('/api/naotu/loginout', userControler.loginout)
 
 router.post('/api/naotu/get_user_info', userControler.getUserInfo)
 
+router.post('/api/naotu/get_user_infos', userControler.getUserInfos)
+
 module.exports = router
