@@ -30,6 +30,9 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="createTime"
+        label="创建时间" />
+      <el-table-column
         prop="updateTime"
         label="修改时间" />
       <el-table-column
@@ -78,7 +81,7 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       form: {
-        id: '',
+        _id: '',
         name: '',
         status: true,
       },
@@ -118,14 +121,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const { id } = row
-        this.fetchDelete([id])
+        const { _id } = row
+        this.fetchDelete([_id])
       })
     },
-    async fetchDelete(ids) {
+    async fetchDelete(_ids) {
       try {
         const rp = {
-          ids
+          _ids
         }
         const doc = await Api.identityRemove(rp)
         const { response: {error_code, hint_message} } = doc
@@ -141,25 +144,26 @@ export default {
     },
     // 编辑
     handleEdit(index, row) {
-      const { id } = row
-      if(!id) return false
+      const { _id } = row
+      if(!_id) return false
       this.confirmType = 1
-      this.fetchFormData(id)
+      this.fetchFormData(_id)
     },
     // 获取表单数据
-    async fetchFormData(id) {
+    async fetchFormData(_id) {
       try {
         const rp = {
-          id
+          _id
         }
         const doc = await Api.identityFindById(rp)
         const {response: {error_code, hint_message}, data} = doc
         if(!error_code) {
-          this.form.id = data[0].id
-          this.form.name = data[0].name
-          this.form.status = data[0].status
+          this.dialogFormVisible = true
           this.$nextTick(() => {
-            this.dialogFormVisible = true
+            this.$refs.form.resetFields() // 不加，点击新增，数据有残留
+            this.form._id = data._id
+            this.form.name = data.name
+            this.form.status = data.status
           })
         }
       } catch (error) {

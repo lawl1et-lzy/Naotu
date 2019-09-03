@@ -1,7 +1,10 @@
 const IdentityDao = require('../dao/identity.dao.js');
-const identityDao = new IdentityDao();
 const BaseResJson = require('../util/baseResJson.js');
+const BaseUtil = require('../util/base.js');
+
+const identityDao = new IdentityDao();
 let resJson = new BaseResJson();
+const baseUitl = new BaseUtil();
 
 const create = async (req, res) => {
   try {
@@ -14,7 +17,7 @@ const create = async (req, res) => {
     if(data) {
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 10002, hint_message: '保存失败'})
+      resJson.emit({res, error_code: 10002})
     }
   } catch (error) {
     console.log(error)
@@ -40,7 +43,7 @@ const findById = async (req, res) => {
   try {
     const { _id } = req.body
     if(!_id) resJson.emit({res, error_code: 10001})
-    const data = await funcDao.findById(_id)
+    const data = await identityDao.findById(_id)
     if(data) {
       resJson.emit({res, data})
     } else {
@@ -54,23 +57,24 @@ const findById = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { id, name, status } = req.body
-    if(!(id && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
+    const { _id, name, status } = req.body
+    if(!(_id && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
     let project = {
       status
     }
     if(name) project.name = name
 
-    const data = await identityDao.updateOne({
-      id
-    },{
-      $set: project
-    })
+    const data = await identityDao.findByIdAndUpdate(
+      _id,
+      {
+        $set: project
+      }
+    )
     
     if(data) {
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 20000})
+      resJson.emit({res, error_code: 10002})
     }
   } catch (error) {
     console.log(error)
@@ -80,12 +84,18 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
-    const { ids } = req.body
-    console.log(ids instanceof Array)
-    if(!Array.isArray(ids) || ids.length === 0) resJson.emit({res, error_code: 10001})
+    const { _ids } = req.body
+    console.log(_ids instanceof Array)
+    if(!Array.isArray(_ids) || _ids.length === 0) resJson.emit({res, error_code: 10001})
+    
+    let newids = []
+    for (let _id of _ids) {
+      let formatId = await baseUitl.formatToObjectId(_id)
+      newids.push(formatId)
+    }
     const data = await identityDao.remove({
-      id: {
-        $in: ids
+      _id: {
+        $in: _ids
       }
     })
     if(data) {

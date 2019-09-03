@@ -17,7 +17,7 @@ const create = async (req, res) => {
     if(data) {
       resJson.emit({res})
     } else {
-      resJson.emit({res, error_code: 10002, hint_message: '保存失败'})
+      resJson.emit({res, error_code: 10002})
     }
   } catch (error) {
     console.log(error)
