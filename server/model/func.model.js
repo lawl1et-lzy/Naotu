@@ -12,6 +12,9 @@ const func = {
     required:true,
     default: true
   },
+  value: {
+    type: Number
+  },
   deleteTime: {
     type: Date,
   }

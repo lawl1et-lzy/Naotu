@@ -12,4 +12,6 @@ router.post('/api/naotu/user_identity_update', userIdentityControler.update)
 
 router.post('/api/naotu/user_identity_remove', userIdentityControler.remove)
 
+router.post('/api/naotu/user_identity_userConnectFunc', userIdentityControler.userConnectFunc)
+
 module.exports = router

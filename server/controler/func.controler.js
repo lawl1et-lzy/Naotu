@@ -8,11 +8,12 @@ const baseUitl = new BaseUtil();
 
 const create = async (req, res) => {
   try {
-    const { name, status } = req.body
-    if(!(name && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
+    const { name, value, status } = req.body
+    if(!(name && value && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
     const data = await funcDao.create({
       name,
-      status
+      status,
+      value: Number(value)
     })
     if(data) {
       resJson.emit({res})
@@ -57,12 +58,13 @@ const findById = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { _id, name, status } = req.body
-    if(!(_id && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
+    const { _id, name, value, status } = req.body
+    if(!(_id && value && (typeof status === 'boolean'))) resJson.emit({res, error_code: 10001})
     let project = {
       status
     }
     if(name) project.name = name
+    if(value) project.value = Number(value)
     const data = await funcDao.findByIdAndUpdate(
       _id,
       {

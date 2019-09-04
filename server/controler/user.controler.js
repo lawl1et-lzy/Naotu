@@ -34,26 +34,8 @@ const login = async (req, res, next) => {
   }
 }
 
-// 获取用户基本信息
-const getUserInfo = async (req, res) => {
-  try {
-    const { userid } = JSON.parse(req.cookies.user)
-    const data = await userDao.findById(
-      userid, 
-      { 
-        realname: 1,
-        username: 1
-      }
-    )
-    resJson.emit({res, data})
-  } catch (error) {
-    console.log(error)
-    resJson.emit({res, error_code: 20000})
-  }
-}
-
 // 获取所有用户基本信息
-const getUserInfos = async (req, res) => {
+const getUsersInfo = async (req, res) => {
   try {
     const data = await userDao.find({}, {
       password: 0,
@@ -86,6 +68,5 @@ const loginout = async (req, res, next) => {
 module.exports = {
   login,
   loginout,
-  getUserInfo,
-  getUserInfos
+  getUsersInfo
 }
