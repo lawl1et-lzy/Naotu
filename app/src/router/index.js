@@ -8,6 +8,7 @@ import Layout from '@/layout'
 const Func = () => import('@/views/func')
 const Identity = () => import('@/views/identity')
 const IdentityFunc = () => import('@/views/identityFunc')
+const UserIdentity = () => import('@/views/userIdentity')
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -98,7 +99,12 @@ export const constantRoutes = [
       path: '/identityFunc',
       name: 'IdentityFunc',
       component: IdentityFunc,
-      meta: { title: '权限配置', icon: 'trash' }
+      meta: { title: '角色-功能', icon: 'trash' }
+    },{
+      path: '/userIdentity',
+      name: 'UserIdentity',
+      component: UserIdentity,
+      meta: { title: '用户-角色', icon: 'trash' }
     }]
   },
 
