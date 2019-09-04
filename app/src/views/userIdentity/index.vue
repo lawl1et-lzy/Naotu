@@ -162,7 +162,7 @@ export default {
         if(Array.isArray(n) && n.length > 0) {
           this.users = await this.formatUsers(n)
         } else {
-          this['user/getUserInfos']()
+          this['user/getUsersInfo']()
         }
       },
       immediate: true
@@ -171,7 +171,7 @@ export default {
   methods: {
     ...mapActions([
       'identity/getIdentityInfos',
-      'user/getUserInfos',
+      'user/getUsersInfo',
     ]),
     // 多选框
     handleSelectionChange(val) {

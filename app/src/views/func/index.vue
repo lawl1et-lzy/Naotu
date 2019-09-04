@@ -20,6 +20,9 @@
       <el-table-column
         prop="name"
         label="文件名" />
+      <el-table-column
+        prop="value"
+        label="映射值" />
       <!-- 是否启用 -->
       <el-table-column
         prop="status"
@@ -59,6 +62,9 @@
         <el-form-item label="功能名称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" autocomplete="off" placeholder="请输入名称"></el-input>
         </el-form-item>
+        <el-form-item label="映射值" :label-width="formLabelWidth" prop="value">
+          <el-input v-model="form.value" autocomplete="off" placeholder="请输入映射值"></el-input>
+        </el-form-item>
         <el-form-item label="是否启用" :label-width="formLabelWidth" prop="status">
           <el-switch v-model="form.status"></el-switch>
         </el-form-item>
@@ -83,6 +89,7 @@ export default {
       form: {
         _id: '',
         name: '',
+        value: '',
         status: true,
       },
       formLabelWidth: '120px',
@@ -163,6 +170,7 @@ export default {
             this.$refs.form.resetFields() // 不加，点击新增，数据有残留
             this.form._id = data._id
             this.form.name = data.name
+            this.form.value = data.value
             this.form.status = data.status
           })
         }

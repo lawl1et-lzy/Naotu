@@ -19,14 +19,14 @@ class Api {
   static getUserInfo() {
     return axios({
       method: 'POST',
-      url: `/naotu/get_user_info`
+      url: `/naotu/user_identity_userConnectFunc`
     })
   }
 
-  static getUserInfos() {
+  static getUsersInfo() {
     return axios({
       method: 'POST',
-      url: `/naotu/get_user_infos`
+      url: `/naotu/get_users_info`
     })
   }
 }

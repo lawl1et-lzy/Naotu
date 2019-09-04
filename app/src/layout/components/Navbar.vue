@@ -9,7 +9,7 @@
         <div class="avatar-wrapper">
           <!-- <img :src="require('@/icons/avatar.jpg')" class="user-avatar"> -->
           <div class="user-avatar">
-            {{ userInfo ? userInfo.realname : '' }}
+            {{ userInfo ? userInfo.userInfo.realname : '' }}
           </div>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -34,7 +34,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Api from '@/api/user.api'
 import { getToken } from '@/utils/auth'
-
+import { resetRouter } from '@/router'
 export default {
   components: {
     Breadcrumb,
@@ -47,9 +47,6 @@ export default {
     ])
   },
   methods: {
-    ...mapActions('user', [
-      'getUserInfo'
-    ]),
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -60,25 +57,15 @@ export default {
           let { response } = res
           if(!response.error_code) {
             this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+
+            location.reload() // 目前强制刷新更新路由数据，否者登录不同权限的角色，路由不更新
           }
         })
         .catch(err => {
           console.log(err)
         })
     },
-    async initData() {
-      try {
-        const user = getToken()
-        const userid = user ? JSON.parse(user).userid : '' 
-        if(userid) await this.getUserInfo()
-      } catch (error) {
-        console.log('initData', error)
-      }
-    }
   },
-  created() {
-    this.initData()
-  }
 }
 </script>
 

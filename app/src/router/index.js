@@ -1,10 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import store from '@/store'
 Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+const Login = () => import('@/views/login/index')
+const P404 = () => import('@/views/404')
+const Home = () => import('@/views/home/index')
+const Trash = () => import('@/views/trash/index')
+const NaotuEditor = () => import('@/views/naotuEditor/index')
 const Func = () => import('@/views/func')
 const Identity = () => import('@/views/identity')
 const IdentityFunc = () => import('@/views/identityFunc')
@@ -27,84 +32,87 @@ const UserIdentity = () => import('@/views/userIdentity')
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
+  * value: Number
  */
 
 /**
- * constantRoutes
+ * defaultRoutes
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+export const defaultRoutes = [
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
+    component: Login,
     name: 'Login',
     hidden: true
   },
   {
     path: '/404',
-    component: () => import('@/views/404'),
+    component: P404,
     hidden: true
   },
   {
     path: '/',
     component: Layout,
     redirect: '/home',
+    meta: { title: '文件管理', icon: 'dashboard' },
     children: [{
       path: 'home/:_id?',
       name: 'Home',
-      component: () => import('@/views/home/index'),
-      meta: { title: '我的文件', icon: 'dashboard' }
+      component: Home,
+      meta: { title: '我的文件' }
+    },{
+      path: '/trash',
+      name: 'Trash',
+      component: Trash,
+      meta: { title: '回收站' }
     }]
   },
   {
-    path: '/naotueditor/:id',
+    path: '/naotueditor/:_id',
     name: 'NaotuEditor',
-    component: () => import('@/views/naotuEditor/index'),
+    component: NaotuEditor,
     hidden: true,
     meta: {
       title: '脑图编辑'
     }
   },
   {
-    path: '/trash',
-    component: Layout,
-    redirect: '/trash',
-    name: 'TrashCom',
-    children: [{
-      path: '/trash',
-      name: 'Trash',
-      component: () => import('@/views/trash/index'),
-      meta: { title: '回收站', icon: 'trash' }
-    }]
-  },
-
-  {
     path: '/system',
     component: Layout,
     redirect: '/system/',
-    name: 'system',
+    name: 'System',
+    hidden: true,
     meta: { title: '系统配置', icon: 'example' },
     children: [{
       path: '/func',
       name: 'Func',
       component: Func,
-      meta: { title: '功能配置', icon: 'trash' }
+      hidden: true,
+      value: 2,
+      meta: { title: '功能' }
     },{
       path: '/identity',
       name: 'Identity',
       component: Identity,
-      meta: { title: '角色配置', icon: 'trash' }
+      hidden: true,
+      value: 3,
+      meta: { title: '角色' }
     },{
       path: '/identityFunc',
       name: 'IdentityFunc',
       component: IdentityFunc,
-      meta: { title: '角色-功能', icon: 'trash' }
+      hidden: true,
+      value: 4,
+      meta: { title: '权限配置' }
     },{
       path: '/userIdentity',
       name: 'UserIdentity',
       component: UserIdentity,
-      meta: { title: '用户-角色', icon: 'trash' }
+      hidden: true,
+      value: 5,
+      meta: { title: '角色配置' }
     }]
   },
 
@@ -116,23 +124,35 @@ const createRouter = () => new Router({
   mode: 'history', // require service support
   base: 'naotu',
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: defaultRoutes
 })
 
 const router = createRouter()
 
-// qingqingtst: 设置回收站显隐
-// router.beforeEach((to, from, next) => {
-//   const qingqingtst = to.query.qingqingtst
-//   if (qingqingtst) {
-//     const routes = router.options && router.options.routes
-//     if (Array.isArray(routes) && routes.length > 0) {
-//       const trash = routes.find(item => item.name === 'TrashCom')
-//       if (trash) trash.hidden = false
-//     }
-//   }
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  const routes = router.options && router.options.routes
+  const userInfo = store && store.getters && store.getters.userInfo
+  if(!userInfo) {
+    // 配置权限
+    store.dispatch('user/getUserInfo').then(res => {
+      const { funcs } = res
+      store.dispatch('user/setUserInfo', res)
+      if(Array.isArray(funcs) && funcs.length > 0) {
+        for(let func of funcs) {
+          let systemCfg = routes.find(route => route.name === 'System')
+          for(let subSys of systemCfg.children) {
+            if(func.value === subSys.value) {
+              subSys.hidden = false
+              systemCfg.hidden = false
+            }
+          }
+        }
+        store.dispatch('settings/setRouter', routes)
+      }
+    })
+  }
+  next()
+})
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
