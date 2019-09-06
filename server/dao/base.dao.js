@@ -15,6 +15,15 @@ class BaseDao {
     }
   }
 
+  async insertMany (docs, opts) {
+    try {
+      return await this.model.insertMany(docs, opts)
+    } catch (error) {
+      console.log('BaseDao insertMany ------>', error)
+      return error
+    }
+  }
+
   async find (filter, projection) {
     try {
       return await this.model.find(filter, projection)
