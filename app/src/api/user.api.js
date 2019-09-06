@@ -4,7 +4,7 @@ class Api {
   static login(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/login`,
+      url: `/login`,
       data
     })
   }
@@ -12,21 +12,21 @@ class Api {
   static loginout() {
     return axios({
       method: 'POST',
-      url: `/naotu/loginout`,
+      url: `/loginout`
     })
   }
 
   static getUserInfo() {
     return axios({
       method: 'POST',
-      url: `/naotu/user_identity_userConnectFunc`
+      url: `/user_identity_userConnectFunc`
     })
   }
 
   static getUsersInfo() {
     return axios({
       method: 'POST',
-      url: `/naotu/get_users_info`
+      url: `/get_users_info`
     })
   }
 }

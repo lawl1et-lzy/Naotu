@@ -1,9 +1,9 @@
 import Axios from 'axios'
-import router from '../../router';
+import router from '../../router'
 import { removeToken } from '@/utils/auth'
 // 设置请求时长
 const axios = Axios.create({
-  baseURL: process.env.VUE_APP_BASE_API,
+  baseURL: '/naotu/api',
   timeout: 10 * 1000
 })
 
@@ -20,23 +20,23 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   (res) => {
-    let {
+    const {
       status,
       data
     } = res
-    switch(status) {
+    switch (status) {
       case 200:
       case 304:
-        let { response } = data
-        if(Number(response.error_code) === 403) {
+        const { response } = data
+        if (Number(response.error_code) === 403) {
           removeToken()
-          router.push({path: '/login'})
+          router.push({ path: '/login' })
           return false
         }
-        return data;
+        return data
       default:
         Promise.reject(res)
-        break;
+        break
     }
   },
   (error) => {
@@ -46,7 +46,7 @@ axios.interceptors.response.use(
 )
 
 // 构造方法
-let httpServer = (opts) => {
+const httpServer = (opts) => {
   return new Promise((resolve, reject) => {
     return axios(opts)
       .then(res => {

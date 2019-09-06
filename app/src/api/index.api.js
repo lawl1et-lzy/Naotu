@@ -3,74 +3,74 @@ import axios from '@/utils/Api/Api.js'
 
 class Api {
   // addFile
-  static addFile (data) {
+  static addFile(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/add_file`,
+      url: `/add_file`,
       data
     })
   }
   // addDirectory
-  static addDirectory (data) {
+  static addDirectory(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/add_directory`,
+      url: `/add_directory`,
       data
     })
   }
   // update
-  static updateFile (data) {
+  static updateFile(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/update`,
+      url: `/update`,
       data
     })
   }
   // del 脑图
-  static delFile (data) {
+  static delFile(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/del`,
+      url: `/del`,
       data
     })
   }
   // rm 脑图
-  static rmFile (data) {
+  static rmFile(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/rm`,
+      url: `/rm`,
       data
     })
   }
   // queryFile
-  static queryFile (data) {
+  static queryFile(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/query_file`,
+      url: `/query_file`,
       data
     })
   }
   // queryDirectoty
-  static queryDirectoty (data) {
+  static queryDirectoty(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/query_directory`,
+      url: `/query_directory`,
       data
     })
   }
   // 获取 ROOT_ID
-  static getRootid (data) {
+  static getRootid(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/get_root_id`,
+      url: `/get_root_id`,
       data
     })
   }
   // 重命名
-  static rename (data) {
+  static rename(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/rename`,
+      url: `/rename`,
       data
     })
   }

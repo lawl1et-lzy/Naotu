@@ -1,37 +1,37 @@
 import axios from '@/utils/Api/Api.js'
 
 class Api {
-  static identityFuncFind () {
+  static identityFuncFind() {
     return axios({
       method: 'POST',
-      url: `/naotu/identity_func_find`,
+      url: `/identity_func_find`
     })
   }
-  static identityFuncFindById (data) {
+  static identityFuncFindById(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/identity_func_findById`,
+      url: `/identity_func_findById`,
       data
     })
   }
-  static identityFuncCreate (data) {
+  static identityFuncCreate(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/identity_func_create`,
+      url: `/identity_func_create`,
       data
     })
   }
-  static identityFuncUpdate (data) {
+  static identityFuncUpdate(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/identity_func_update`,
+      url: `/identity_func_update`,
       data
     })
   }
-  static identityFuncRemove (data) {
+  static identityFuncRemove(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/identity_func_remove`,
+      url: `/identity_func_remove`,
       data
     })
   }

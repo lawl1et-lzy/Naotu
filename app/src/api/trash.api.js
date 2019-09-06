@@ -2,23 +2,23 @@
 import axios from '@/utils/Api/Api.js'
 
 class Api {
-  static querySelfDirectotyForTrash () {
+  static querySelfDirectotyForTrash() {
     return axios({
       method: 'POST',
-      url: `/naotu/query_self_directory_for_trash`,
+      url: `/query_self_directory_for_trash`
     })
   }
-  static revertFiles (data) {
+  static revertFiles(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/revert_files`,
+      url: `/revert_files`,
       data
     })
   }
-   static deleteFiles (data) {
+  static deleteFiles(data) {
     return axios({
       method: 'POST',
-      url: `/naotu/delete_files`,
+      url: `/delete_files`,
       data
     })
   }

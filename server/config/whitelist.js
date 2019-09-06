@@ -1,7 +1,7 @@
 // 白名单
 const whitelist = [
-  '/api/naotu/login',
-  '/api/naotu/loginout'
+  '/naotu/api/login',
+  '/naotu/api/loginout'
 ]
 
 module.exports = whitelist
