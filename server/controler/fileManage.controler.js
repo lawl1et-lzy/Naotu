@@ -5,12 +5,9 @@ const BaseUtil = require('../util/base.js');
 let resJson = new BaseResJson();
 const fileManageDao = new FileManageDao();
 const baseUitl = new BaseUtil();
-const dir = `../tmp/upload`
+const dir = '/upload'
 const upload = async (req, res) => {
   try {
-    // const { protocol } = req
-    // const host = req.get('host')
-    // const service_url = `${protocol}://${host}`
     const imgFiles = req.files
     const { userid } = JSON.parse(req.cookies.user)
 

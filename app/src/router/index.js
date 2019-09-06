@@ -14,6 +14,7 @@ const Func = () => import('@/views/func')
 const Identity = () => import('@/views/identity')
 const IdentityFunc = () => import('@/views/identityFunc')
 const UserIdentity = () => import('@/views/userIdentity')
+const FileManage = () => import('@/views/demo/fileManage')
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -63,7 +64,7 @@ export const defaultRoutes = [
       component: Home,
       meta: { title: '我的文件' }
     },{
-      path: '/trash',
+      path: 'trash',
       name: 'Trash',
       component: Trash,
       meta: { title: '回收站' }
@@ -86,28 +87,28 @@ export const defaultRoutes = [
     hidden: true,
     meta: { title: '系统配置', icon: 'example' },
     children: [{
-      path: '/func',
+      path: 'func',
       name: 'Func',
       component: Func,
       hidden: true,
       value: 2,
       meta: { title: '功能' }
     },{
-      path: '/identity',
+      path: 'identity',
       name: 'Identity',
       component: Identity,
       hidden: true,
       value: 3,
       meta: { title: '角色' }
     },{
-      path: '/identityFunc',
+      path: 'identityFunc',
       name: 'IdentityFunc',
       component: IdentityFunc,
       hidden: true,
       value: 4,
       meta: { title: '权限配置' }
     },{
-      path: '/userIdentity',
+      path: 'userIdentity',
       name: 'UserIdentity',
       component: UserIdentity,
       hidden: true,
@@ -115,7 +116,18 @@ export const defaultRoutes = [
       meta: { title: '角色配置' }
     }]
   },
-
+  {
+    path: '/demo',
+    component: Layout,
+    redirect: '/demo',
+    meta: { title: 'demo', icon: 'dashboard' },
+    children: [{
+      path: '图片上传',
+      name: 'fileManage',
+      component: FileManage,
+      meta: { title: '图片上传' }
+    }]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
