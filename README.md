@@ -45,4 +45,10 @@ node app.js / npm start apiserver
 ```
 
 
+<<<<<<< Updated upstream
 紧急bug修复代码块
+=======
+<!-- 暂存的更改 begin -->
+暂存的更改
+<!-- 暂存的更改 end -->
+>>>>>>> Stashed changes
