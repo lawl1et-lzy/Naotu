@@ -28,3 +28,6 @@ npm install
 # start api server
 node app.js / npm start apiserver
 ```
+
+
+inside 1
