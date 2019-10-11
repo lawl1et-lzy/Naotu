@@ -43,15 +43,3 @@ npm install
 # start api server
 node app.js / npm start apiserver
 ```
-
-cherry-pick 01
-
-cherry-pick 02
-
-cherry-pick 03
-
-cherry-pick 04
-
-cherry-pick master 01
-
-cherry-pick master 02
